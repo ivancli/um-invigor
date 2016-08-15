@@ -1,0 +1,13 @@
+{
+    "name": "invigor/um",
+    "description": "User management package",
+    "type": "Project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Li",
+            "email": "ivan.li@invigorgroup.com"
+        }
+    ],
+    "require": {}
+}
