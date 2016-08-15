@@ -1,7 +1,7 @@
 <?php namespace Invigor\UM\Contracts;
 
 /**
- * This file is part of Entrust,
+ * This file is part of UM,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
