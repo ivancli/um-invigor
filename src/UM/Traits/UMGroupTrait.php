@@ -20,7 +20,7 @@ trait UMGroupTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('um.user'), Config::get('um.group_users_table'));
+        return $this->belongsToMany(Config::get('um.user'), Config::get('um.group_user_table'));
     }
 
     /**

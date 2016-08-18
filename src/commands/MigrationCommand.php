@@ -36,15 +36,17 @@ class MigrationCommand extends Command
     {
         $this->laravel->view->addNamespace('um', substr(__DIR__, 0, -8).'views');
 
+        $groupsTable         = Config::get('um.groups_table');
+        $groupUserTable      = Config::get('um.group_user_table');
         $rolesTable          = Config::get('um.roles_table');
         $roleUserTable       = Config::get('um.role_user_table');
         $permissionsTable    = Config::get('um.permissions_table');
         $permissionRoleTable = Config::get('um.permission_role_table');
 
         $this->line('');
-        $this->info( "Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
+        $this->info( "Tables: $groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
 
-        $message = "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
+        $message = "A migration that creates '$groupsTable', '$groupUserTable', '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
         " tables will be created in database/migrations directory";
 
         $this->comment($message);
@@ -55,7 +57,7 @@ class MigrationCommand extends Command
             $this->line('');
 
             $this->info("Creating migration...");
-            if ($this->createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)) {
+            if ($this->createMigration($groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)) {
 
                 $this->info("Migration successfully created!");
             } else {
@@ -73,11 +75,16 @@ class MigrationCommand extends Command
     /**
      * Create the migration.
      *
-     * @param string $name
-     *
+     * @param $groupsTable
+     * @param $rolesTable
+     * @param $roleUserTable
+     * @param $permissionsTable
+     * @param $permissionRoleTable
      * @return bool
+     * @internal param string $name
+     *
      */
-    protected function createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
+    protected function createMigration($groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
     {
         $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_um_setup_tables.php";
 
@@ -85,7 +92,7 @@ class MigrationCommand extends Command
         $userModel   = Config::get('auth.providers.users.model');
         $userKeyName = (new $userModel())->getKeyName();
 
-        $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
+        $data = compact('groupsTable', 'groupUserTable', 'rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
 
         $output = $this->laravel->view->make('um::generators.migration')->with($data)->render();
 

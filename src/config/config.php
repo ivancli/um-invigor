@@ -109,5 +109,7 @@ return [
     | database.
     |
     */
-    'groups_table' => 'groups'
+    'groups_table' => 'groups',
+
+    'group_user_table' => 'group_user',
 ];
