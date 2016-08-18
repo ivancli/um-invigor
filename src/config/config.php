@@ -89,4 +89,25 @@ return [
     */
     'role_foreign_key' => 'role_id',
 
+    /*
+    |--------------------------------------------------------------------------
+    | UM Group Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the Group model used by UM to create correct relations.
+    | Update the group if it is in a different namespace.
+    |
+    */
+    'group' => 'App\Group',
+
+    /*
+    |--------------------------------------------------------------------------
+    | UM Groups Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the groups table used by UM to save groups to the
+    | database.
+    |
+    */
+    'groups_table' => 'groups'
 ];
