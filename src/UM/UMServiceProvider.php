@@ -19,6 +19,13 @@ class UMServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+//    protected $repoBindings = array(
+//        'UM\UserRepositoryContract' => 'UM\UserRepository',
+//        'UM\GroupRepositoryContract' => 'UM\GroupRepository',
+//        'UM\RoleRepositoryContract' => 'UM\RoleRepository',
+//        'UM\PermissionRepositoryContract' => 'UM\PermissionRepository'
+//    );
+
     /**
      * Bootstrap the application events.
      *
@@ -50,6 +57,10 @@ class UMServiceProvider extends ServiceProvider
         $this->registerCommands();
 
         $this->mergeConfig();
+
+//        foreach($this->repoBindings as $contract=>$repo){
+//            $this->app->bind()
+//        }
     }
 
     /**

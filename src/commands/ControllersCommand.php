@@ -19,7 +19,7 @@ class ControllersCommand extends Command
      *
      * @var string
      */
-    protected $name = 'um:migration';
+    protected $name = 'um:controller';
 
     /**
      * The console command description.
