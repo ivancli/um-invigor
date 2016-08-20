@@ -44,7 +44,7 @@ class MigrationCommand extends Command
         $permissionRoleTable = Config::get('um.permission_role_table');
 
         $this->line('');
-        $this->info( "Tables: $groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable" );
+        $this->info("Controllers: UserController, GroupController, RoleController, PermissionController");
 
         $message = "A migration that creates '$groupsTable', '$groupUserTable', '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
         " tables will be created in database/migrations directory";

@@ -14,6 +14,7 @@ class UMRoleController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -47,7 +48,7 @@ class UMRoleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -71,6 +72,16 @@ class UMRoleController extends Controller
         } else {
             /* insert */
             $role = UMRole::create($request->all());
+
+            /* attach role user */
+            if ($request->has('user_id') && is_array($request->get('user_id'))) {
+                $role->users()->attach($request->get('user_id'));
+            }
+
+            /* attach role permission */
+            if ($request->has('permission_id') && is_array($request->get('user_id'))) {
+                $role->permissions()->attach($request->get('permission_id'));
+            }
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -126,7 +137,7 @@ class UMRoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return bool|\Illuminate\Http\Response
      */
     public function edit($id)
@@ -144,8 +155,8 @@ class UMRoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response|string
      */
     public function update(Request $request, $id)
@@ -168,7 +179,20 @@ class UMRoleController extends Controller
         } else {
             try {
                 $role = UMRole::findOrFail($id);
+
+                /* update role */
                 $role->update($request->all());
+
+                /* update role user */
+                if ($request->has('user_id') && is_array($request->get('user_id'))) {
+                    $role->users()->sync($request->get('user_id'));
+                }
+
+                /* update role permission */
+                if ($request->has('permission_id')) {
+                    $role->permissions()->sync($request->get('permission_id'));
+                }
+
                 $status = true;
                 if ($request->ajax()) {
                     if ($request->wantsJson()) {

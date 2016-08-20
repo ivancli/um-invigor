@@ -71,6 +71,12 @@ class UMPermissionController extends Controller
         } else {
             /* insert */
             $permission = UMPermission::create($request->all());
+
+            /* attach role */
+            if ($request->has('role_id') && is_array($request->get('role_id'))) {
+                $permission->roles()->attach($request->get('role_id'));
+            }
+
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -169,6 +175,12 @@ class UMPermissionController extends Controller
             try {
                 $permission = UMPermission::findOrFail($id);
                 $permission->update($request->all());
+
+                /* attach role */
+                if ($request->has('role_id') && is_array($request->get('role_id'))) {
+                    $permission->roles()->sync($request->get('role_id'));
+                }
+
                 $status = true;
                 if ($request->ajax()) {
                     if ($request->wantsJson()) {

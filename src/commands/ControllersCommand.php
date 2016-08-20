@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 
 class ControllersCommand extends Command
 {
+    protected $signature = 'um:controller {--entity=}';
     /**
      * The console command name.
      *
@@ -26,7 +27,7 @@ class ControllersCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a migration following the UM specifications.';
+    protected $description = 'Creates a controllers for UM entities.';
 
     /**
      * Execute the console command.
@@ -37,64 +38,99 @@ class ControllersCommand extends Command
     {
         $this->laravel->view->addNamespace('um', substr(__DIR__, 0, -8) . 'views');
 
-        $groupsTable = Config::get('um.groups_table');
-        $groupUserTable = Config::get('um.group_user_table');
-        $rolesTable = Config::get('um.roles_table');
-        $roleUserTable = Config::get('um.role_user_table');
-        $permissionsTable = Config::get('um.permissions_table');
-        $permissionRoleTable = Config::get('um.permission_role_table');
+        $userController = Config::get('um.user_controller');
+        $groupController = Config::get('um.group_controller');
+        $roleController = Config::get('um.role_controller');
+        $permissionController = Config::get('um.permission_controller');
 
         $this->line('');
-        $this->info("Tables: $groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable");
+        $this->info("Controllers: $userController, $groupController, $roleController, $permissionController");
 
-        $message = "A migration that creates '$groupsTable', '$groupUserTable', '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'" .
-            " tables will be created in database/migrations directory";
-
+        if (isset($this->option()['entity'])) {
+            switch ($this->option('entity')) {
+                case "user":
+                    $message = "'$userController' will be created in app/Http/Controller/um directory";
+                    break;
+                case "group":
+                    $message = "'$groupController' will be created in app/Http/Controller/um directory";
+                    break;
+                case "role":
+                    $message = "'$roleController' will be created in app/Http/Controller/um directory";
+                    break;
+                case "permission":
+                    $message = "'$permissionController' will be created in app/Http/Controller/um directory";
+                    break;
+                default:
+            }
+        } else {
+            $message = "'$userController', '$groupController', '$roleController', '$permissionController'" .
+                " will be created in app/Http/Controller/um directory";
+        }
         $this->comment($message);
         $this->line('');
 
-        if ($this->confirm("Proceed with the migration creation? [Yes|no]", "Yes")) {
+        if ($this->confirm("Proceed with the controllers creation? [Yes|no]", "Yes")) {
 
             $this->line('');
 
-            $this->info("Creating migration...");
-            if ($this->createMigration($groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)) {
-
-                $this->info("Migration successfully created!");
+            $this->info("Creating controllers...");
+            if (isset($this->option()['entity'])) {
+                switch ($this->option('entity')) {
+                    case "user":
+                        $this->createOneController($userController);
+                        break;
+                    case "group":
+                        $this->createOneController($groupController);
+                        break;
+                    case "role":
+                        $this->createOneController($roleController);
+                        break;
+                    case "permission":
+                        $this->createOneController($permissionController);
+                        break;
+                    default:
+                }
             } else {
-                $this->error(
-                    "Couldn't create migration.\n Check the write permissions" .
-                    " within the database/migrations directory."
-                );
+                /* Create all controllers */
+                $this->createOneController($userController);
+                $this->createOneController($groupController);
+                $this->createOneController($roleController);
+                $this->createOneController($permissionController);
             }
-
             $this->line('');
+        }
+    }
 
+    protected function createOneController($controllerName)
+    {
+        /* Create user controller */
+        if ($this->createController($controllerName)) {
+            $this->info("$controllerName successfully created!");
+        } else {
+            $this->error(
+                "Couldn't create $controllerName.\n Check the write permissions" .
+                " within the app/Http/Controller/um directory."
+            );
         }
     }
 
     /**
-     * Create the migration.
+     * Create Controller
      * @param $className
      * @return bool
-     * @internal param $groupsTable
-     * @internal param $rolesTable
-     * @internal param $roleUserTable
-     * @internal param $permissionsTable
-     * @internal param $permissionRoleTable
-     * @internal param string $name
      */
-    protected function createControllers($className)
+    protected function createController($className)
     {
-        $migrationFile = app_path("Http/Controllers/um/") . $className . ".php";
+        $folderPath = app_path("Http/Controllers/UM");
+        $controllerFile = $folderPath . '/' . $className . ".php";
 
-        $userKeyName = (new $userModel())->getKeyName();
+        $data = compact(['className']);
 
-        $data = compact('groupsTable', 'groupUserTable', 'rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
-
-        $output = $this->laravel->view->make('um::generators.migration')->with($data)->render();
-
-        if (!file_exists($migrationFile) && $fs = fopen($migrationFile, 'x')) {
+        $output = $this->laravel->view->make('um::generators.controllers.extend_controller')->with($data)->render();
+        if (!is_dir($folderPath)) {
+            mkdir($folderPath);
+        }
+        if (!file_exists($controllerFile) && $fs = fopen($controllerFile, 'x')) {
             fwrite($fs, $output);
             fclose($fs);
             return true;

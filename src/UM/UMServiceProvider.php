@@ -40,6 +40,7 @@ class UMServiceProvider extends ServiceProvider
 
         // Register commands
         $this->commands('command.um.migration');
+        $this->commands('command.um.controller');
         
         // Register blade directives
         $this->bladeDirectives();
@@ -122,6 +123,9 @@ class UMServiceProvider extends ServiceProvider
         $this->app->singleton('command.um.migration', function ($app) {
             return new MigrationCommand();
         });
+        $this->app->singleton('command.um.controller', function ($app) {
+            return new ControllersCommand();
+        });
     }
 
     /**
@@ -144,7 +148,8 @@ class UMServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'command.um.migration'
+            'command.um.migration',
+            'command.um.controller'
         ];
     }
 }

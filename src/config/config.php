@@ -112,4 +112,12 @@ return [
     'groups_table' => 'groups',
 
     'group_user_table' => 'group_user',
+
+    'group_foreign_key' => 'group_id',
+
+
+    'user_controller' => 'UserController',
+    'group_controller' => 'GroupController',
+    'role_controller' => 'RoleController',
+    'permission_controller' => 'PermissionController',
 ];

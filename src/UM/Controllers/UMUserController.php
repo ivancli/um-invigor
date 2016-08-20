@@ -26,7 +26,7 @@ class UMUserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = ($this->userModel)::all();
+        $users = (new $this->userModel)::all();
         $status = true;
         $length = $users->length;
         if ($request->ajax()) {
@@ -80,7 +80,18 @@ class UMUserController extends Controller
             /* insert */
             $input = $request->all();
             $input['password'] = bcrypt($input['password']);
-            $user = ($this->userModel)::create($input);
+            $user = (new $this->userModel)::create($input);
+
+            /* attach role user */
+            if ($request->has('role_id') && is_array($request->get('role_id'))) {
+                $user->roles()->attach($request->get('role_id'));
+            }
+
+            /* attach group */
+            if ($request->has('group_id') && is_array($request->get('group_id'))) {
+                $user->groups()->attach($request->get('group_id'));
+            }
+
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -105,7 +116,7 @@ class UMUserController extends Controller
     public function show(Request $request, $id)
     {
         try {
-            $user = ($this->userModel)::findOrFail($id);
+            $user = (new $this->userModel)::findOrFail($id);
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -142,7 +153,7 @@ class UMUserController extends Controller
     public function edit($id)
     {
         try {
-            $user = ($this->userModel)::findOrFail($id);
+            $user = (new $this->userModel)::findOrFail($id);
             /* TODO assign view */
             return view('')->with(compact(['user']));
         } catch (ModelNotFoundException $e) {
@@ -177,10 +188,21 @@ class UMUserController extends Controller
             }
         } else {
             try {
-                $user = ($this->userModel)::findOrFail($id);
+                $user = (new $this->userModel)::findOrFail($id);
                 $input = $request->all();
                 $input['password'] = bcrypt($input['password']);
                 $user->update($input);
+
+                /* sync role user */
+                if ($request->has('role_id') && is_array($request->get('role_id'))) {
+                    $user->roles()->sync($request->get('role_id'));
+                }
+
+                /* sync group user */
+                if ($request->has('group_id') && is_array($request->get('group_id'))) {
+                    $user->groups()->sync($request->get('group_id'));
+                }
+
                 $status = true;
                 if ($request->ajax()) {
                     if ($request->wantsJson()) {
@@ -219,7 +241,7 @@ class UMUserController extends Controller
     public function destroy(Request $request, $id)
     {
         try {
-            $user = ($this->userModel)::findOrFail($id);
+            $user = (new $this->userModel)::findOrFail($id);
             $user->delete();
             $status = true;
             if ($request->ajax()) {

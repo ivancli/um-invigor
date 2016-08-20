@@ -52,6 +52,11 @@ trait UMUserTrait
         return $this->belongsToMany(Config::get('um.role'), Config::get('um.role_user_table'), Config::get('um.user_foreign_key'), Config::get('um.role_foreign_key'));
     }
 
+    public function groups()
+    {
+        return $this->belongsToMany(Config::get('um.group'), Config::get('um.group_user_table'), Config::get('um.user_foreign_key'), Config::get('um.group_foreign_key'));
+    }
+
     /**
      * Boot the user model
      * Attach event listener to remove the many-to-many records when trying to delete

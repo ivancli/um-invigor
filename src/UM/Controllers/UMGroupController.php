@@ -79,6 +79,12 @@ class UMGroupController extends Controller
         } else {
             /* insert */
             $group = UMGroup::create($request->all());
+
+            /* attach user */
+            if ($request->has('user_id') && is_array($request->get('user_id'))) {
+                $group->users()->attach($request->get('user_id'));
+            }
+
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -179,6 +185,12 @@ class UMGroupController extends Controller
             try {
                 $group = UMGroup::findOrFail($id);
                 $group->update($request->all());
+
+                /* sync user */
+                if ($request->has('user_id') && is_array($request->get('user_id'))) {
+                    $group->users()->sync($request->get('user_id'));
+                }
+
                 $status = true;
                 if ($request->ajax()) {
                     if ($request->wantsJson()) {
