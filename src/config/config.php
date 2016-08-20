@@ -120,4 +120,6 @@ return [
     'group_controller' => 'GroupController',
     'role_controller' => 'RoleController',
     'permission_controller' => 'PermissionController',
+
+    'users_table' => 'users'
 ];

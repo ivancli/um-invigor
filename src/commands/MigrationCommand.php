@@ -34,20 +34,20 @@ class MigrationCommand extends Command
      */
     public function fire()
     {
-        $this->laravel->view->addNamespace('um', substr(__DIR__, 0, -8).'views');
+        $this->laravel->view->addNamespace('um', substr(__DIR__, 0, -8) . 'views');
 
-        $groupsTable         = Config::get('um.groups_table');
-        $groupUserTable      = Config::get('um.group_user_table');
-        $rolesTable          = Config::get('um.roles_table');
-        $roleUserTable       = Config::get('um.role_user_table');
-        $permissionsTable    = Config::get('um.permissions_table');
+        $groupsTable = Config::get('um.groups_table');
+        $groupUserTable = Config::get('um.group_user_table');
+        $rolesTable = Config::get('um.roles_table');
+        $roleUserTable = Config::get('um.role_user_table');
+        $permissionsTable = Config::get('um.permissions_table');
         $permissionRoleTable = Config::get('um.permission_role_table');
 
         $this->line('');
         $this->info("Controllers: UserController, GroupController, RoleController, PermissionController");
 
-        $message = "A migration that creates '$groupsTable', '$groupUserTable', '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
-        " tables will be created in database/migrations directory";
+        $message = "A migration that creates '$groupsTable', '$groupUserTable', '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'" .
+            " tables will be created in database/migrations directory";
 
         $this->comment($message);
         $this->line('');
@@ -62,7 +62,7 @@ class MigrationCommand extends Command
                 $this->info("Migration successfully created!");
             } else {
                 $this->error(
-                    "Couldn't create migration.\n Check the write permissions".
+                    "Couldn't create migration.\n Check the write permissions" .
                     " within the database/migrations directory."
                 );
             }
@@ -76,20 +76,23 @@ class MigrationCommand extends Command
      * Create the migration.
      *
      * @param $groupsTable
+     * @param $groupUserTable
      * @param $rolesTable
      * @param $roleUserTable
      * @param $permissionsTable
      * @param $permissionRoleTable
      * @return bool
      * @internal param string $name
-     *
      */
     protected function createMigration($groupsTable, $groupUserTable, $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
     {
-        $migrationFile = base_path("/database/migrations")."/".date('Y_m_d_His')."_um_setup_tables.php";
+        $migrationFile = base_path("/database/migrations") . "/" . date('Y_m_d_His') . "_um_setup_tables.php";
 
-        $usersTable  = Config::get('auth.providers.users.table');
-        $userModel   = Config::get('auth.providers.users.model');
+        $usersTable = Config::get('auth.providers.users.table');
+        if (is_null($usersTable) || empty($usersTable) || $usersTable == '') {
+            $usersTable = Config::get('um.users_table');
+        }
+        $userModel = Config::get('auth.providers.users.model');
         $userKeyName = (new $userModel())->getKeyName();
 
         $data = compact('groupsTable', 'groupUserTable', 'rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
