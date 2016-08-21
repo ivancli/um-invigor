@@ -1,9 +1,13 @@
 <?php echo '<?php' ?>
+
 namespace App\Http\Controllers\UM;
 
-use Invigor\UM\Controllers\UMUserController;
+use Invigor\UM\Controllers\UM{{ $className }};
 
-class GroupController extends UMUserController
+class {{ $className }} extends UM{{ $className }}
 {
-
+    public function index()
+    {
+        parent::index()
+    }
 }

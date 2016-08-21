@@ -8,6 +8,7 @@
  * @package Invigor\UM
  */
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 class UMServiceProvider extends ServiceProvider
@@ -35,14 +36,16 @@ class UMServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('um.php'),
+            __DIR__ . '/../config/config.php' => config_path('um.php'),
         ]);
+
+        $this->loadViewsFrom(__DIR__.'/../views/', 'um');
 
         // Register commands
         $this->commands('command.um.migration');
         $this->commands('command.um.controller');
         $this->commands('command.um.seeder');
-        
+
         // Register blade directives
         $this->bladeDirectives();
     }
@@ -54,6 +57,10 @@ class UMServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerRoute();
+
+        $this->registerLaravelCollective();
+
         $this->registerUM();
 
         $this->registerCommands();
@@ -73,29 +80,29 @@ class UMServiceProvider extends ServiceProvider
     private function bladeDirectives()
     {
         // Call to UM::hasRole
-        \Blade::directive('role', function($expression) {
+        \Blade::directive('role', function ($expression) {
             return "<?php if (\\UM::hasRole{$expression}) : ?>";
         });
 
-        \Blade::directive('endrole', function($expression) {
+        \Blade::directive('endrole', function ($expression) {
             return "<?php endif; // UM::hasRole ?>";
         });
 
         // Call to UM::can
-        \Blade::directive('permission', function($expression) {
+        \Blade::directive('permission', function ($expression) {
             return "<?php if (\\UM::can{$expression}) : ?>";
         });
 
-        \Blade::directive('endpermission', function($expression) {
+        \Blade::directive('endpermission', function ($expression) {
             return "<?php endif; // UM::can ?>";
         });
 
         // Call to UM::ability
-        \Blade::directive('ability', function($expression) {
+        \Blade::directive('ability', function ($expression) {
             return "<?php if (\\UM::ability{$expression}) : ?>";
         });
 
-        \Blade::directive('endability', function($expression) {
+        \Blade::directive('endability', function ($expression) {
             return "<?php endif; // UM::ability ?>";
         });
     }
@@ -110,7 +117,7 @@ class UMServiceProvider extends ServiceProvider
         $this->app->bind('um', function ($app) {
             return new UM($app);
         });
-        
+
         $this->app->alias('um', 'Invigor\UM\UM');
     }
 
@@ -132,6 +139,19 @@ class UMServiceProvider extends ServiceProvider
         });
     }
 
+    public function registerLaravelCollective()
+    {
+        $this->app->register('Collective\Html\HtmlServiceProvider');
+        $loader = AliasLoader::getInstance();
+        $loader->alias('Form', 'Collective\Html\FormFacade');
+        $loader->alias('Html', 'Collective\Html\HtmlFacade');
+    }
+
+    public function registerRoute()
+    {
+        include __DIR__.'/routes.php';
+    }
+
     /**
      * Merges user's and um's configs.
      *
@@ -140,7 +160,7 @@ class UMServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'um'
+            __DIR__ . '/../config/config.php', 'um'
         );
     }
 

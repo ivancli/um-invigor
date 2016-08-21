@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class UMUserController extends Controller
 {
@@ -22,13 +22,14 @@ class UMUserController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
+     * @param null $view
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $view = null)
     {
         $users = (new $this->userModel)::all();
         $status = true;
-        $length = $users->length;
+        $length = count($users);
         if ($request->ajax()) {
             if ($request->wantsJson()) {
                 return response()->json(compact(['status', 'users', 'length']));
@@ -36,29 +37,36 @@ class UMUserController extends Controller
                 return $users;
             }
         } else {
-            /* TODO assign view */
-            return view('')->with(compact(['users', 'status', 'length']));
+            if (is_null($view)) {
+                $view = 'um::user.index';
+            }
+            return view($view)->with(compact(['users', 'status', 'length']));
         }
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param null $view
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($view = null)
     {
-        /* TODO assign view */
-        return view('');
+        if (is_null($view)) {
+            $view = 'um::user.create';
+        }
+        return view($view);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
+     * @param null $route
      * @return \Illuminate\Http\Response
+     * @internal param null $view
      */
-    public function store(Request $request)
+    public function store(Request $request, $route = null)
     {
         /*validation*/
         $validator = Validator::make($request->all(), [
@@ -100,8 +108,10 @@ class UMUserController extends Controller
                     return $user;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['user', 'status']));
+                if (is_null($route)) {
+                    $route = 'um.user.index';
+                }
+                return redirect()->route($route)->with(compact(['user', 'status']));
             }
         }
     }
@@ -111,9 +121,10 @@ class UMUserController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $view
      * @return \Illuminate\Http\Response|string
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, $id, $view = null)
     {
         try {
             $user = (new $this->userModel)::findOrFail($id);
@@ -126,7 +137,10 @@ class UMUserController extends Controller
                 }
             } else {
                 /* TODO assign view */
-                return view('')->with(compact(['user', 'status']));
+                if (is_null($view)) {
+                    $view = 'um::user.show';
+                }
+                return view($view)->with(compact(['user', 'status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;
@@ -148,14 +162,17 @@ class UMUserController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     * @param null $view
      * @return bool|\Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $view = null)
     {
         try {
             $user = (new $this->userModel)::findOrFail($id);
-            /* TODO assign view */
-            return view('')->with(compact(['user']));
+            if (is_null($view)) {
+                $view = "um::user.edit";
+            }
+            return view($view)->with(compact(['user']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -167,9 +184,10 @@ class UMUserController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
+     * @param null $route
      * @return string
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'email|max:255|min:1|unique:users,email,' . $id,
@@ -211,8 +229,10 @@ class UMUserController extends Controller
                         return $user;
                     }
                 } else {
-                    /* TODO assign view */
-                    return view('')->with(compact(['user', 'status']));
+                    if (is_null($route)) {
+                        $route = "um.user.index";
+                    }
+                    return redirect()->route($route)->with(compact(['user', 'status']));
                 }
             } catch (ModelNotFoundException $e) {
                 $status = false;
@@ -236,9 +256,10 @@ class UMUserController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $route
      * @return bool
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id, $route = null)
     {
         try {
             $user = (new $this->userModel)::findOrFail($id);
@@ -251,8 +272,10 @@ class UMUserController extends Controller
                     return $status;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['status']));
+                if (is_null($route)) {
+                    $route = 'um::user';
+                }
+                return redirect()->route($route)->with(compact(['status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;

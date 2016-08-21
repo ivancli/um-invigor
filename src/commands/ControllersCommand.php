@@ -34,6 +34,7 @@ class ControllersCommand extends Command
      *
      * @return void
      */
+
     public function fire()
     {
         $this->laravel->view->addNamespace('um', substr(__DIR__, 0, -8) . 'views');
