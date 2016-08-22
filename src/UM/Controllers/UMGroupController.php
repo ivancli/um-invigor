@@ -4,7 +4,7 @@ namespace Invigor\UM\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 use Invigor\UM\UMGroup;
 
 /**
@@ -20,13 +20,14 @@ class UMGroupController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
+     * @param null $view
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response|static[]
      */
-    public function index(Request $request)
+    public function index(Request $request, $view = null)
     {
         $groups = UMGroup::all();
         $status = true;
-        $length = $groups->length;
+        $length = count($groups);
         if ($request->ajax()) {
             if ($request->wantsJson()) {
                 return response()->json(compact(['status', 'groups', 'length']));
@@ -34,35 +35,42 @@ class UMGroupController extends Controller
                 return $groups;
             }
         } else {
-            /* TODO assign view */
-            return view('')->with(compact(['groups', 'status', 'length']));
+            if (is_null($view)) {
+                $view = 'um::group.index';
+            }
+            return view($view)->with(compact(['groups', 'status', 'length']));
         }
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param null $view
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($view = null)
     {
-        /* TODO assign view */
-        return view('');
+        if (is_null($view)) {
+            $view = 'um::group.create';
+        }
+        return view($view);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
+     * @param null $route
      * @return \Illuminate\Http\Response|UMGroup
      */
-    public function store(Request $request)
+    public function store(Request $request, $route = null)
     {
         /*validation*/
         $validator = Validator::make($request->all(), [
-            'group_name' => 'required|unique:groups|max:255|min:1',
-            'website' => 'required|url|max:2083|min:1',
-            'description' => 'max: 2048'
+            'name' => 'required|unique:groups|max:255|min:1',
+            'active' => 'boolean',
+            'website' => 'url|max:2083|min:1',
+            'description' => 'max:255'
         ]);
         if ($validator->fails()) {
             $status = false;
@@ -93,8 +101,10 @@ class UMGroupController extends Controller
                     return $group;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['group', 'status']));
+                if (is_null($route)) {
+                    $route = 'um.group.index';
+                }
+                return redirect()->route($route)->with(compact(['group', 'status']));
             }
         }
     }
@@ -104,9 +114,10 @@ class UMGroupController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $view
      * @return string
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, $id, $view = null)
     {
         try {
             $group = UMGroup::findOrFail($id);
@@ -118,8 +129,10 @@ class UMGroupController extends Controller
                     return $group;
                 }
             } else {
-                /* TODO assign view */
-                return view('')->with(compact(['group', 'status']));
+                if (is_null($view)) {
+                    $view = 'um::group.show';
+                }
+                return view($view)->with(compact(['group', 'status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;
@@ -141,14 +154,17 @@ class UMGroupController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     * @param null $view
      * @return bool|\Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $view = null)
     {
         try {
             $group = UMGroup::findOrFail($id);
-            /* TODO assign view */
-            return view('')->with(compact(['group']));
+            if (is_null($view)) {
+                $view = "um::group.edit";
+            }
+            return view($view)->with(compact(['group']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -160,9 +176,10 @@ class UMGroupController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
+     * @param null $route
      * @return \Illuminate\Http\Response|string
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
             'group_name' => 'max:255|min:1|unique:groups,group_name,' . $id,
@@ -199,8 +216,10 @@ class UMGroupController extends Controller
                         return $group;
                     }
                 } else {
-                    /* TODO assign view */
-                    return view('')->with(compact(['group', 'status']));
+                    if (is_null($route)) {
+                        $route = "um.group.index";
+                    }
+                    return redirect()->route($route)->with(compact(['group', 'status']));
                 }
             } catch (ModelNotFoundException $e) {
                 $status = false;
@@ -224,9 +243,10 @@ class UMGroupController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $route
      * @return bool|\Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id, $route = null)
     {
         try {
             $group = UMGroup::findOrFail($id);
@@ -239,8 +259,10 @@ class UMGroupController extends Controller
                     return $status;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['status']));
+                if (is_null($route)) {
+                    $route = 'um.group.index';
+                }
+                return redirect()->route($route)->with(compact(['status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;

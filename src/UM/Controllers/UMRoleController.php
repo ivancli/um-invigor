@@ -5,8 +5,8 @@ namespace Invigor\UM\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
-use Invigor\UM\Middleware\UMRole;
+use Invigor\UM\UMRole;
+use Illuminate\Support\Facades\Validator;
 
 
 class UMRoleController extends Controller
@@ -15,13 +15,14 @@ class UMRoleController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @param null $view
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response|static[]
      */
-    public function index(Request $request)
+    public function index(Request $request, $view = null)
     {
         $roles = UMRole::all();
         $status = true;
-        $length = $roles->length;
+        $length = count($roles);
         if ($request->ajax()) {
             if ($request->wantsJson()) {
                 return response()->json(compact(['status', 'roles', 'length']));
@@ -29,29 +30,35 @@ class UMRoleController extends Controller
                 return $roles;
             }
         } else {
-            /* TODO assign view */
-            return view('')->with(compact(['roles', 'status', 'length']));
+            if (is_null($view)) {
+                $view = 'um::role.index';
+            }
+            return view($view)->with(compact(['roles', 'status', 'length']));
         }
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param null $view
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($view = null)
     {
-        /* TODO assign view */
-        return view('');
+        if (is_null($view)) {
+            $view = 'um::role.create';
+        }
+        return view($view);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param null $route
+     * @return \Illuminate\Http\Response|UMRole
      */
-    public function store(Request $request)
+    public function store(Request $request, $route = null)
     {
         /*validation*/
         $validator = Validator::make($request->all(), [
@@ -90,8 +97,10 @@ class UMRoleController extends Controller
                     return $role;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['role', 'status']));
+                if (is_null($route)) {
+                    $route = 'um.role.index';
+                }
+                return redirect()->route($route)->with(compact(['role', 'status']));
             }
         }
     }
@@ -101,9 +110,10 @@ class UMRoleController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $view
      * @return \Illuminate\Http\Response|string
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, $id, $view = null)
     {
         try {
             $role = UMRole::findOrFail($id);
@@ -115,8 +125,10 @@ class UMRoleController extends Controller
                     return $role;
                 }
             } else {
-                /* TODO assign view */
-                return view('')->with(compact(['role', 'status']));
+                if (is_null($view)) {
+                    $view = 'um::role.show';
+                }
+                return view($view)->with(compact(['role', 'status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;
@@ -138,14 +150,17 @@ class UMRoleController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     * @param null $view
      * @return bool|\Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $view = null)
     {
         try {
             $role = UMRole::findOrFail($id);
-            /* TODO assign view */
-            return view('')->with(compact(['role']));
+            if (is_null($view)) {
+                $view = "um::role.edit";
+            }
+            return view($view)->with(compact(['role']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -157,9 +172,10 @@ class UMRoleController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
+     * @param null $route
      * @return \Illuminate\Http\Response|string
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:255|min:1|unique:roles,name,' . $id,
@@ -201,8 +217,10 @@ class UMRoleController extends Controller
                         return $role;
                     }
                 } else {
-                    /* TODO assign view */
-                    return view('')->with(compact(['role', 'status']));
+                    if (is_null($route)) {
+                        $route = "um.role.index";
+                    }
+                    return redirect()->route($route)->with(compact(['role', 'status']));
                 }
             } catch (ModelNotFoundException $e) {
                 $status = false;
@@ -226,9 +244,10 @@ class UMRoleController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $route
      * @return bool|\Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id, $route = null)
     {
         try {
             $role = UMRole::findOrFail($id);
@@ -241,8 +260,10 @@ class UMRoleController extends Controller
                     return $status;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['status']));
+                if (is_null($route)) {
+                    $route = 'um::role';
+                }
+                return redirect()->route($route)->with(compact(['status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;

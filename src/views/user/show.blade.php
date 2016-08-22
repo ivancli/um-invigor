@@ -1,3 +1,7 @@
-Show
+Show User
 
-{{print_r($user)}}
+<?php
+
+        echo "<pre>";
+        print_r($user->toArray());
+        echo "</pre>";

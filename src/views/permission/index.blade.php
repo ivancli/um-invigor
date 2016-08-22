@@ -1,4 +1,4 @@
 <?php
 echo "<pre>";
-print_r($roles->toArray());
+print_r($permissions->toArray());
 echo "</pre>";

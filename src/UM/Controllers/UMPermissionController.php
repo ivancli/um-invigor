@@ -5,7 +5,7 @@ namespace Invigor\UM\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 use Invigor\UM\UMPermission;
 
 class UMPermissionController extends Controller
@@ -14,13 +14,14 @@ class UMPermissionController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
+     * @param null $view
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function index(Request $request)
+    public function index(Request $request, $view = null)
     {
         $permissions = UMPermission::all();
         $status = true;
-        $length = $permissions->length;
+        $length = count($permissions);
         if ($request->ajax()) {
             if ($request->wantsJson()) {
                 return response()->json(compact(['status', 'permissions', 'length']));
@@ -28,29 +29,36 @@ class UMPermissionController extends Controller
                 return $permissions;
             }
         } else {
-            /* TODO assign view */
-            return view('')->with(compact(['permissions', 'status', 'length']));
+            if (is_null($view)) {
+                $view = 'um::permission.index';
+            }
+            return view($view)->with(compact(['permissions', 'status', 'length']));
         }
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param null $view
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($view = null)
     {
-        /* TODO assign view */
-        return view('');
+        if (is_null($view)) {
+            $view = 'um::permission.create';
+        }
+        return view($view);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
+     * @param null $route
      * @return \Illuminate\Http\Response|UMPermission
+     * @internal param null $view
      */
-    public function store(Request $request)
+    public function store(Request $request, $route = null)
     {
         /*validation*/
         $validator = Validator::make($request->all(), [
@@ -85,8 +93,10 @@ class UMPermissionController extends Controller
                     return $permission;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['permission', 'status']));
+                if (is_null($route)) {
+                    $route = 'um::permission.index';
+                }
+                return redirect()->route($route)->with(compact(['permission', 'status']));
             }
         }
     }
@@ -96,9 +106,10 @@ class UMPermissionController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $view
      * @return string
      */
-    public function show(Request $request, $id)
+    public function show(Request $request, $id, $view = null)
     {
         try {
             $permission = UMPermission::findOrFail($id);
@@ -110,8 +121,10 @@ class UMPermissionController extends Controller
                     return $permission;
                 }
             } else {
-                /* TODO assign view */
-                return view('')->with(compact(['permission', 'status']));
+                if (is_null($view)) {
+                    $view = 'um::permission.show';
+                }
+                return view($view)->with(compact(['permission', 'status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;
@@ -133,14 +146,17 @@ class UMPermissionController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     * @param null $view
      * @return bool|\Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, $view = null)
     {
         try {
             $permission = UMPermission::findOrFail($id);
-            /* TODO assign view */
-            return view('')->with(compact(['permission']));
+            if (is_null($view)) {
+                $view = "um::permission.edit";
+            }
+            return view($view)->with(compact(['permission']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -152,9 +168,10 @@ class UMPermissionController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
+     * @param null $route
      * @return \Illuminate\Http\Response|string
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:255|min:1|unique:permissions,name,' . $id,
@@ -189,8 +206,10 @@ class UMPermissionController extends Controller
                         return $permission;
                     }
                 } else {
-                    /* TODO assign view */
-                    return view('')->with(compact(['permission', 'status']));
+                    if (is_null($route)) {
+                        $route = "um.permission.index";
+                    }
+                    return redirect()->route($route)->with(compact(['permission', 'status']));
                 }
             } catch (ModelNotFoundException $e) {
                 $status = false;
@@ -214,9 +233,10 @@ class UMPermissionController extends Controller
      *
      * @param Request $request
      * @param  int $id
+     * @param null $route
      * @return bool|\Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $id, $route = null)
     {
         try {
             $permission = UMPermission::findOrFail($id);
@@ -229,8 +249,10 @@ class UMPermissionController extends Controller
                     return $status;
                 }
             } else {
-                /* TODO assign route */
-                return redirect()->route('')->with(compact(['status']));
+                if (is_null($route)) {
+                    $route = 'um.permission.index';
+                }
+                return redirect()->route($route)->with(compact(['status']));
             }
         } catch (ModelNotFoundException $e) {
             $status = false;

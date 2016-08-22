@@ -1,1 +1,4 @@
-{{ print_r($users) }}
+<?php
+echo "<pre>";
+print_r($users->toArray());
+echo "</pre>";

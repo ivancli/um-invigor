@@ -24,6 +24,8 @@ class UMRole extends Model implements UMRoleInterface
      */
     protected $table;
 
+    protected $fillable = ['name', 'display_name', 'description'];
+
     /**
      * Creates a new instance of the model.
      *
@@ -34,5 +36,4 @@ class UMRole extends Model implements UMRoleInterface
         parent::__construct($attributes);
         $this->table = Config::get('um.roles_table');
     }
-
 }

@@ -16,8 +16,8 @@ class UMSetupTables extends Migration
         Schema::create('{{ $groupsTable }}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->boolean('active')->default(1)->index();
-            $table->string('display_name')->nullable();
+            $table->boolean('active')->default(0)->index();
+            $table->string('website', 2083)->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });
@@ -87,6 +87,8 @@ class UMSetupTables extends Migration
      */
     public function down()
     {
+        Schema::drop('{{ $groupsTable }}');
+        Schema::drop('{{ $groupUserTable }}');
         Schema::drop('{{ $permissionRoleTable }}');
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');

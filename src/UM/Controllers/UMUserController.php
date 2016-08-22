@@ -136,7 +136,6 @@ class UMUserController extends Controller
                     return $user;
                 }
             } else {
-                /* TODO assign view */
                 if (is_null($view)) {
                     $view = 'um::user.show';
                 }
