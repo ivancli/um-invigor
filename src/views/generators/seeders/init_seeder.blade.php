@@ -16,6 +16,7 @@ class InitialSeeder extends Seeder
 
         $roleId = DB::table('{{$rolesTable}}')->insertGetId([
                 'name' => 'super_admin',
+                'display_name' => 'Super admin,
         ]);
 
         DB::table('{{$roleUserTable}}')->insert([
