@@ -25,7 +25,12 @@ class UMGroupController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        $groups = UMGroup::all();
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $groups = UMGroup::where('name', 'LIKE', "%$search%")->orwhere('website', 'LIKE', "%$search%")->paginate(10);
+        } else {
+            $groups = UMGroup::paginate(10);
+        }
         $status = true;
         $length = count($groups);
         if ($request->ajax()) {
@@ -69,7 +74,7 @@ class UMGroupController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:groups|max:255|min:1',
             'active' => 'boolean',
-            'website' => 'url|max:2083|min:1',
+            'website' => 'required|url|max:2083|min:1',
             'description' => 'max:255'
         ]);
         if ($validator->fails()) {
@@ -182,8 +187,9 @@ class UMGroupController extends Controller
     public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
-            'group_name' => 'max:255|min:1|unique:groups,group_name,' . $id,
-            'website' => 'url|max:2083|min:1',
+            'name' => 'required|max:255|min:1|unique:groups,name,' . $id,
+            'active' => 'boolean',
+            'website' => 'required|url|max:2083|min:1',
             'description' => 'max: 2048'
         ]);
         if ($validator->fails()) {

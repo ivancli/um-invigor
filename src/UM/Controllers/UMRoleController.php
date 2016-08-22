@@ -20,7 +20,12 @@ class UMRoleController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        $roles = UMRole::all();
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $roles = UMRole::where('name', 'LIKE', "%$search%")->orwhere('display_name', 'LIKE', "%$search%")->paginate(10);
+        } else {
+            $roles = UMRole::paginate(10);
+        }
         $status = true;
         $length = count($roles);
         if ($request->ajax()) {
@@ -178,7 +183,7 @@ class UMRoleController extends Controller
     public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:255|min:1|unique:roles,name,' . $id,
+            'name' => 'required|max:255|min:1|unique:roles,name,' . $id,
         ]);
         if ($validator->fails()) {
             $status = false;
@@ -261,7 +266,7 @@ class UMRoleController extends Controller
                 }
             } else {
                 if (is_null($route)) {
-                    $route = 'um::role';
+                    $route = 'um.role.index';
                 }
                 return redirect()->route($route)->with(compact(['status']));
             }

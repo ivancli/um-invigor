@@ -19,7 +19,12 @@ class UMPermissionController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        $permissions = UMPermission::all();
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $permissions = UMPermission::where('name', 'LIKE', "%$search%")->orwhere('display_name', 'LIKE', "%$search%")->paginate(10);
+        } else {
+            $permissions = UMPermission::paginate(10);
+        }
         $status = true;
         $length = count($permissions);
         if ($request->ajax()) {
@@ -94,7 +99,7 @@ class UMPermissionController extends Controller
                 }
             } else {
                 if (is_null($route)) {
-                    $route = 'um::permission.index';
+                    $route = 'um.permission.index';
                 }
                 return redirect()->route($route)->with(compact(['permission', 'status']));
             }
@@ -174,7 +179,7 @@ class UMPermissionController extends Controller
     public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:255|min:1|unique:permissions,name,' . $id,
+            'name' => 'required|max:255|min:1|unique:permissions,name,' . $id,
         ]);
         if ($validator->fails()) {
             $status = false;

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
+use Invigor\UM\UMGroup;
+use Invigor\UM\UMRole;
 
 class UMUserController extends Controller
 {
@@ -27,12 +29,18 @@ class UMUserController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        $users = (new $this->userModel)::all();
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $users = (new $this->userModel)::where('name', 'LIKE', "%$search%")->orwhere('email', 'LIKE', "%$search%")->paginate(10);
+        } else {
+            $users = (new $this->userModel)::paginate(10);
+        }
+
         $status = true;
         $length = count($users);
         if ($request->ajax()) {
             if ($request->wantsJson()) {
-                return response()->json(compact(['status', 'users', 'length']));
+                return response()->json(compact(['status', 'users', 'length', 'groups']));
             } else {
                 return $users;
             }
@@ -40,7 +48,7 @@ class UMUserController extends Controller
             if (is_null($view)) {
                 $view = 'um::user.index';
             }
-            return view($view)->with(compact(['users', 'status', 'length']));
+            return view($view)->with(compact(['users', 'status', 'length', 'groups']));
         }
     }
 
@@ -52,10 +60,12 @@ class UMUserController extends Controller
      */
     public function create($view = null)
     {
+        $groups = UMGroup::pluck('name', 'id');
+        $roles = UMRole::pluck('display_name', 'id');
         if (is_null($view)) {
             $view = 'um::user.create';
         }
-        return view($view);
+        return view($view)->with(compact(['groups', 'roles']));
     }
 
     /**
@@ -70,7 +80,9 @@ class UMUserController extends Controller
     {
         /*validation*/
         $validator = Validator::make($request->all(), [
-            'email' => 'email|max:255|min:1|unique:users,email'
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6|confirmed',
         ]);
         if ($validator->fails()) {
             $status = false;
@@ -82,7 +94,7 @@ class UMUserController extends Controller
                     return $errors;
                 }
             } else {
-                return redirect()->back()->withInput()->withErrors($validator);
+                return redirect()->back()->withErrors($validator)->withInput();
             }
         } else {
             /* insert */
@@ -168,10 +180,12 @@ class UMUserController extends Controller
     {
         try {
             $user = (new $this->userModel)::findOrFail($id);
+            $groups = UMGroup::pluck('name', 'id');
+            $roles = UMRole::pluck('display_name', 'id');
             if (is_null($view)) {
                 $view = "um::user.edit";
             }
-            return view($view)->with(compact(['user']));
+            return view($view)->with(compact(['user', 'groups', 'roles']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -189,7 +203,9 @@ class UMUserController extends Controller
     public function update(Request $request, $id, $route = null)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'email|max:255|min:1|unique:users,email,' . $id,
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'password' => 'min:6|confirmed',
         ]);
         if ($validator->fails()) {
             $status = false;
@@ -272,7 +288,7 @@ class UMUserController extends Controller
                 }
             } else {
                 if (is_null($route)) {
-                    $route = 'um::user';
+                    $route = 'um.user.index';
                 }
                 return redirect()->route($route)->with(compact(['status']));
             }

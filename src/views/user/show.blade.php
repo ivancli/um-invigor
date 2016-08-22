@@ -1,7 +1,10 @@
-Show User
+@extends('um::layouts.um')
 
-<?php
-
-        echo "<pre>";
-        print_r($user->toArray());
-        echo "</pre>";
+@section('content')
+    Show User
+    <?php
+    echo "<pre>";
+    print_r($user->toArray());
+    echo "</pre>";
+    ?>
+@stop

@@ -19,7 +19,7 @@ trait UMPermissionTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('um.role'), Config::get('um.permission_role_table'));
+        return $this->belongsToMany(Config::get('um.role'), Config::get('um.permission_role_table'), Config::get('um.permission_foreign_key'), Config::get('um.role_foreign_key'));
     }
 
     /**

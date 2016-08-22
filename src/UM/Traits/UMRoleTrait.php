@@ -17,30 +17,33 @@ trait UMRoleTrait
     public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
-        $cacheKey = 'um_permissions_for_role_'.$this->$rolePrimaryKey;
+        $cacheKey = 'um_permissions_for_role_' . $this->$rolePrimaryKey;
         return Cache::tags(Config::get('um.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
             return $this->perms()->get();
         });
     }
+
     public function save(array $options = [])
     {   //both inserts and updates
         $result = parent::save($options);
         Cache::tags(Config::get('um.permission_role_table'))->flush();
         return $result;
     }
+
     public function delete(array $options = [])
     {   //soft or hard
         $result = parent::delete($options);
         Cache::tags(Config::get('um.permission_role_table'))->flush();
         return $result;
     }
+
     public function restore()
     {   //soft delete undo's
         $result = parent::restore();
         Cache::tags(Config::get('um.permission_role_table'))->flush();
         return $result;
     }
-    
+
     /**
      * Many-to-Many relations with the user model.
      *
@@ -48,8 +51,13 @@ trait UMRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), Config::get('um.role_user_table'),Config::get('um.role_foreign_key'),Config::get('um.user_foreign_key'));
-       // return $this->belongsToMany(Config::get('auth.model'), Config::get('um.role_user_table'));
+        if (!is_null(Config::get('auth.model'))) {
+            $userModel = Config::get('auth.model');
+        } else {
+            $userModel = Config::get('um.user');
+        }
+        return $this->belongsToMany($userModel, Config::get('um.role_user_table'), Config::get('um.role_foreign_key'), Config::get('um.user_foreign_key'));
+        // return $this->belongsToMany(Config::get('auth.model'), Config::get('um.role_user_table'));
     }
 
     /**
@@ -60,7 +68,7 @@ trait UMRoleTrait
      */
     public function perms()
     {
-        return $this->belongsToMany(Config::get('um.permission'), Config::get('um.permission_role_table'));
+        return $this->belongsToMany(Config::get('um.permission'), Config::get('um.permission_role_table'), Config::get('um.role_foreign_key'), Config::get('um.permission_foreign_key'));
     }
 
     /**
@@ -74,7 +82,7 @@ trait UMRoleTrait
     {
         parent::boot();
 
-        static::deleting(function($role) {
+        static::deleting(function ($role) {
             if (!method_exists(Config::get('um.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
@@ -83,12 +91,12 @@ trait UMRoleTrait
             return true;
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string|array $name       Permission name or array of permission names.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param string|array $name Permission name or array of permission names.
+     * @param bool $requireAll All permissions in the array are required.
      *
      * @return bool
      */

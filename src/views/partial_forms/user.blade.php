@@ -14,3 +14,12 @@
     {!! Form::label('password_confirmation', 'Confirm password', array('class' => 'control-label')) !!}
     {!! Form::password('password_confirmation', array('class' => 'form-control')) !!}
 </div>
+<div class="form-group">
+    {!! Form::label('group_id[]', 'Groups', array('class' => 'control-label')) !!}
+    {!! Form::select('group_id[]', $groups, isset($user) ? $user->groups->pluck('id')->toArray() : null, ['class'=>'form-control', 'multiple' => 'multiple', 'size'=>10]) !!}
+</div>
+
+<div class="form-group">
+    {!! Form::label('role_id[]', 'Roles', array('class' => 'control-label')) !!}
+    {!! Form::select('role_id[]', $roles, isset($user) ? $user->roles->pluck('id')->toArray() : null, ['class'=>'form-control', 'multiple' => 'multiple', 'size'=>10]) !!}
+</div>

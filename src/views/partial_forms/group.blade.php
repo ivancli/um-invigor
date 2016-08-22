@@ -4,7 +4,7 @@
 </div>
 <div class="form-group">
     {!! Form::label('active', 'Is active', array('class' => 'control-label')) !!}
-    {!! Form::checkbox('active', '1', true, array('class' => 'form-control')) !!}
+    {!! Form::checkbox('active', '1', null) !!}
 </div>
 <div class="form-group">
     {!! Form::label('website', 'Website', array('class' => 'control-label')) !!}
