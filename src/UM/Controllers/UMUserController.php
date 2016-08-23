@@ -3,6 +3,7 @@
 namespace Invigor\UM\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -33,6 +34,48 @@ class UMUserController extends Controller
      */
     public function index(Request $request, $view = null)
     {
+        if ($request->ajax()) {
+            $users = User::when($request->has('start'), function ($query) use ($request) {
+                return $query->skip($request->get('start'));
+            })
+                ->when($request->has('length'), function ($query) use ($request) {
+                    return $query->take($request->get('length'));
+                })
+                ->when($request->has('search'), function ($query) use ($request) {
+                    return $query->where('name', 'LIKE', "%{$request->get('search')['value']}%")
+                        ->orwhere('email', 'LIKE', "%{$request->get('search')['value']}%");
+                })
+                ->when($request->has('order') && is_array($request->get('order')), function ($query) use ($request) {
+                    $order = $request->get('order');
+                    $columns = $request->get('columns');
+                    foreach ($order as $index => $ord) {
+                        if (isset($ord['column']) && isset($columns[$ord['column']])) {
+                            $name = $columns[$ord['column']]['name'];
+                            $direction = $ord['dir'];
+                            $query->orderBy($name, $direction);
+                        }
+                    }
+                    return $query;
+                })->get();
+            $users->each(function ($user, $key) {
+                $user->show_url = route('um.user.show', $user->id);
+                $user->edit_url = route('um.user.edit', $user->id);
+                $user->delete_url = route('um.user.destroy', $user->id);
+            });
+            $output = new \stdClass();
+            $output->draw = (int)($request->has('draw') ? $request->get('draw') : 0);
+            $output->recordsTotal = User::count();
+            $output->recordsFiltered = User::count();
+            $output->data = $users->toArray();
+            return response()->json($output);
+        } else {
+            if (is_null($view)) {
+                $view = 'um::user.index';
+            }
+            return view($view);
+        }
+
+
         if ($request->has('search')) {
             $search = $request->get('search');
             $users = (new $this->userModel)::where('name', 'LIKE', "%{$search['value']}%")->orwhere('email', 'LIKE', "%{$search['value']}%")->paginate(10);
@@ -47,7 +90,6 @@ class UMUserController extends Controller
             $output = new \stdClass();
             $output->draw = $request->has('draw') ? $request->get('draw') : 0;
             $output->recordsTotal = (new $this->userModel)::count();
-            
 
 
             if ($request->wantsJson()) {

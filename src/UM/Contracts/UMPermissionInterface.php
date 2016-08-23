@@ -18,7 +18,17 @@ interface UMPermissionInterface
      */
     public function roles();
 
+    /**
+     * Many-to-One relations with permission model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function parentPerm();
 
+    /**
+     * One-to-Many relations with permission model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function childPerms();
 }

@@ -30,32 +30,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{--@foreach($users as $user)--}}
-                {{--<tr>--}}
-                {{--<td>{{$user->id}}</td>--}}
-                {{--<td>{{$user->name}}</td>--}}
-                {{--<td>{{$user->email}}</td>--}}
-                {{--<td>{{$user->created_at}}</td>--}}
-                {{--<td>{{$user->updated_at}}</td>--}}
-                {{--<td class="text-center">--}}
-                {{--<a href="{{route("um.user.show", [$user->id])}}" class="btn btn-default btn-sm">--}}
-                {{--<i class="glyphicon glyphicon-search"></i>--}}
-                {{--</a>--}}
-                {{--<a href="{{route("um.user.edit", [$user->id])}}" class="btn btn-default btn-sm">--}}
-                {{--<i class="glyphicon glyphicon-pencil"></i>--}}
-                {{--</a>--}}
-                {{--{!! Form::model($user, array('route' => array('um.user.destroy', $user->id), 'method'=>'delete', 'style'=>'display:inline-block', "onsubmit"=>"return confirm('Do you want to delete this user?')")) !!}--}}
-                {{--{!! Form::hidden('id', null, array('class' => 'form-control')) !!}--}}
-                {{--<button class="btn btn-default btn-sm"><i class="glyphicon glyphicon-remove"></i></button>--}}
-                {{--{!! Form::close() !!}--}}
-                {{--</td>--}}
-                {{--</tr>--}}
-                {{--@endforeach--}}
                 </tbody>
             </table>
-            {{--<div class="text-right">--}}
-            {{--{{$users->appends(Request::only('search'))->links()}}--}}
-            {{--</div>--}}
         </div>
     </div>
 @stop
@@ -63,33 +39,94 @@
 
 @section('scripts')
     <script type="text/javascript">
+        var tblUsers = null;
         $(function () {
-            $("#tbl-users").DataTable({
+            jQuery.fn.dataTable.Api.register( 'processing()', function ( show ) {
+                return this.iterator( 'table', function ( ctx ) {
+                    ctx.oApi._fnProcessingDisplay( ctx, show );
+                } );
+            } );
+            tblUsers = $("#tbl-users").DataTable({
+                "pagingType": "full_numbers",
                 "processing": true,
                 "serverSide": true,
-                "dom": '<<t>p>',
+                "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'><'col-sm-7'p>>",
                 "ajax": "{{route('um.user.index')}}",
                 "columns": [
                     {
-                        "name": "id"
+                        "name": "id",
+                        "data": "id"
                     },
                     {
-                        "name": "name"
+                        "name": "name",
+                        "data": "name"
                     },
                     {
-                        "name": "email"
+                        "name": "email",
+                        "data": "email"
                     },
                     {
-                        "name": "created_at"
+                        "name": "created_at",
+                        "data": "created_at"
                     },
                     {
-                        "name": "updated_at"
+                        "name": "updated_at",
+                        "data": "updated_at"
                     },
                     {
-                        "sortable": false
+                        "class": "text-center",
+                        "sortable": false,
+                        "data": function (data) {
+                            return $("<div>").append(
+                                    $("<a>").attr({
+                                        "href": data.show_url
+                                    }).addClass("text-muted").append(
+                                            $("<i>").addClass("glyphicon glyphicon-search")
+                                    ),
+                                    "&nbsp;",
+                                    $("<a>").attr({
+                                        "href": data.edit_url
+                                    }).addClass("text-muted").append(
+                                            $("<i>").addClass("glyphicon glyphicon-pencil")
+                                    ),
+                                    "&nbsp;",
+                                    $("<a>").attr({
+                                        "href": "#",
+                                        "onclick": "deleteUser('" + data.delete_url + "')"
+                                    }).addClass('text-danger').append(
+                                            $("<i>").addClass("glyphicon glyphicon-trash")
+                                    )
+                            ).html();
+//                            return
+                        }
                     }
                 ]
             })
-        })
+        });
+
+        function deleteUser(url, callback) {
+            if (confirm("Do you want to delete this user?")) {
+                tblUsers.processing(true);
+                $.ajax({
+                    "url": url,
+                    "type": "delete",
+                    "data": {
+                        "_token": "{!! csrf_token() !!}"
+                    },
+                    'cache': false,
+                    'dataType': "json",
+                    "success": function (response) {
+                        tblUsers.processing(false);
+                        if ($.isFunction(callback)) {
+                            callback(response);
+                        }
+                        tblUsers.ajax.reload(null, false);
+                    },
+                    "error": function () {
+
+                    }
+                })
+            }
+        }
     </script>
 @stop
