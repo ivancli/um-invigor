@@ -7,9 +7,18 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Invigor\UM\UMPermission;
+use Invigor\UM\UMRole;
 
 class UMPermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:create_permission', ['only' => ['create', 'store']]);
+        $this->middleware('permission:read_permission', ['only' => ['index', 'show']]);
+        $this->middleware('permission:update_permission', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_permission', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,10 +58,11 @@ class UMPermissionController extends Controller
      */
     public function create($view = null)
     {
+        $roles = UMRole::pluck('display_name', 'id');
         if (is_null($view)) {
             $view = 'um::permission.create';
         }
-        return view($view);
+        return view($view)->with(compact(['roles']));
     }
 
     /**
@@ -158,10 +168,11 @@ class UMPermissionController extends Controller
     {
         try {
             $permission = UMPermission::findOrFail($id);
+            $roles = UMRole::pluck('display_name', 'id');
             if (is_null($view)) {
                 $view = "um::permission.edit";
             }
-            return view($view)->with(compact(['permission']));
+            return view($view)->with(compact(['permission', 'roles']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;

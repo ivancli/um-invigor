@@ -15,6 +15,13 @@ use Invigor\UM\UMGroup;
  */
 class UMGroupController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:create_group', ['only' => ['create', 'store']]);
+        $this->middleware('permission:read_group', ['only' => ['index', 'show']]);
+        $this->middleware('permission:update_group', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_group', ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -207,7 +214,11 @@ class UMGroupController extends Controller
         } else {
             try {
                 $group = UMGroup::findOrFail($id);
-                $group->update($request->all());
+                $input = $request->all();
+                if (!$request->has('active')) {
+                    $input['active'] = 0;
+                }
+                $group->update($input);
 
                 /* sync user */
                 if ($request->has('user_id') && is_array($request->get('user_id'))) {

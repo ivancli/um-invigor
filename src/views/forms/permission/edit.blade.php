@@ -1,3 +1,4 @@
+{{count($permission->roles)}} role(s) with this permission.
 @if(isset($errors))
     <ul class="text-danger">
         @foreach ($errors->all('<li>:message</li>') as $message)

@@ -35,4 +35,10 @@ return [
     'permission_controller' => 'PermissionController',
 
     'bootstrap_css_path' => asset('um/bootstrap/css/bootstrap.min.css'),
+
+
+
+
+    /* view routes */
+    'route_user' => 'um::'
 ];

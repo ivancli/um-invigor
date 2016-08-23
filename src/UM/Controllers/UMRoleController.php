@@ -5,12 +5,21 @@ namespace Invigor\UM\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Invigor\UM\UMPermission;
 use Invigor\UM\UMRole;
 use Illuminate\Support\Facades\Validator;
 
 
 class UMRoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:create_role', ['only' => ['create', 'store']]);
+        $this->middleware('permission:read_role', ['only' => ['index', 'show']]);
+        $this->middleware('permission:update_role', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_role', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -50,10 +59,11 @@ class UMRoleController extends Controller
      */
     public function create($view = null)
     {
+        $permissions = UMPermission::pluck('display_name', 'id');
         if (is_null($view)) {
             $view = 'um::role.create';
         }
-        return view($view);
+        return view($view)->with(compact(['permissions']));
     }
 
     /**
@@ -91,9 +101,10 @@ class UMRoleController extends Controller
             }
 
             /* attach role permission */
-            if ($request->has('permission_id') && is_array($request->get('user_id'))) {
-                $role->permissions()->attach($request->get('permission_id'));
+            if ($request->has('permission_id') && is_array($request->get('permission_id'))) {
+                $role->perms()->attach($request->get('permission_id'));
             }
+
             $status = true;
             if ($request->ajax()) {
                 if ($request->wantsJson()) {
@@ -162,10 +173,11 @@ class UMRoleController extends Controller
     {
         try {
             $role = UMRole::findOrFail($id);
+            $permissions = UMPermission::pluck('display_name', 'id');
             if (is_null($view)) {
                 $view = "um::role.edit";
             }
-            return view($view)->with(compact(['role']));
+            return view($view)->with(compact(['role', 'permissions']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -211,7 +223,7 @@ class UMRoleController extends Controller
 
                 /* update role permission */
                 if ($request->has('permission_id')) {
-                    $role->permissions()->sync($request->get('permission_id'));
+                    $role->perms()->sync($request->get('permission_id'));
                 }
 
                 $status = true;

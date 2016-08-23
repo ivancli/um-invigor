@@ -17,6 +17,7 @@
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Display name</th>
                     <th>Description</th>
@@ -28,6 +29,7 @@
                 <tbody>
                 @foreach($roles as $role)
                     <tr>
+                        <td>{{$role->id}}</td>
                         <td>{{$role->name}}</td>
                         <td>{{$role->display_name}}</td>
                         <td>{{$role->description}}</td>

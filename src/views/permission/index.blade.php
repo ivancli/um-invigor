@@ -17,6 +17,7 @@
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Display name</th>
                     <th>Description</th>
@@ -28,6 +29,7 @@
                 <tbody>
                 @foreach($permissions as $permission)
                     <tr>
+                        <td>{{$permission->id}}</td>
                         <td>{{$permission->name}}</td>
                         <td>{{$permission->display_name}}</td>
                         <td>{{$permission->description}}</td>

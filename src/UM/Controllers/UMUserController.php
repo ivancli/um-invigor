@@ -17,6 +17,11 @@ class UMUserController extends Controller
 
     public function __construct()
     {
+        $this->middleware('permission:create_user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:read_user', ['only' => ['index', 'show']]);
+        $this->middleware('permission:update_user', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_user', ['only' => ['destroy']]);
+
         $this->userModel = Config::get('auth.providers.users.model');
     }
 
@@ -223,17 +228,25 @@ class UMUserController extends Controller
             try {
                 $user = (new $this->userModel)::findOrFail($id);
                 $input = $request->all();
-                $input['password'] = bcrypt($input['password']);
+                if ($request->has('password') && $request->get('password') != '') {
+                    $input['password'] = bcrypt($input['password']);
+                } else {
+                    unset($input['password']);
+                }
                 $user->update($input);
 
                 /* sync role user */
                 if ($request->has('role_id') && is_array($request->get('role_id'))) {
                     $user->roles()->sync($request->get('role_id'));
+                } else {
+                    $user->roles()->detach();
                 }
 
                 /* sync group user */
                 if ($request->has('group_id') && is_array($request->get('group_id'))) {
                     $user->groups()->sync($request->get('group_id'));
+                } else {
+                    $user->groups()->detach();
                 }
 
                 $status = true;

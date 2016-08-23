@@ -17,6 +17,7 @@
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Created at</th>
@@ -27,6 +28,7 @@
                 <tbody>
                 @foreach($users as $user)
                     <tr>
+                        <td>{{$user->id}}</td>
                         <td>{{$user->name}}</td>
                         <td>{{$user->email}}</td>
                         <td>{{$user->created_at}}</td>

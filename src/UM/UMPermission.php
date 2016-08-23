@@ -36,5 +36,4 @@ class UMPermission extends Model implements UMPermissionInterface
         parent::__construct($attributes);
         $this->table = Config::get('um.permissions_table');
     }
-
 }

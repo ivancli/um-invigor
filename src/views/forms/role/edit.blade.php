@@ -1,3 +1,4 @@
+<p>{{count($role->users)}} user(s) in this role.</p>
 @if(isset($errors))
     <ul class="text-danger">
         @foreach ($errors->all('<li>:message</li>') as $message)

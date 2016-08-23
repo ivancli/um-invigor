@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class UMSetupTables extends Migration
+class UmSetupTables extends Migration
 {
     /**
      * Run the migrations.
@@ -63,6 +63,11 @@ class UMSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
             $table->string('description')->nullable();
+
+            //self-referencing
+            $table->integer('parent_id')->nullable()->unsigned();
+            $table->foreign('parent_id')->references('id')->on('{{ $permissionsTable }}');
+
             $table->timestamps();
         });
 
@@ -87,8 +92,8 @@ class UMSetupTables extends Migration
      */
     public function down()
     {
-        Schema::drop('{{ $groupsTable }}');
         Schema::drop('{{ $groupUserTable }}');
+        Schema::drop('{{ $groupsTable }}');
         Schema::drop('{{ $permissionRoleTable }}');
         Schema::drop('{{ $permissionsTable }}');
         Schema::drop('{{ $roleUserTable }}');

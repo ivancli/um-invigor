@@ -17,4 +17,8 @@ interface UMPermissionInterface
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function roles();
+
+    public function parentPerm();
+
+    public function childPerms();
 }

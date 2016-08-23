@@ -17,6 +17,7 @@
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Active</th>
                     <th>Website</th>
@@ -29,8 +30,9 @@
                 <tbody>
                 @foreach($groups as $group)
                     <tr>
+                        <td>{{$group->id}}</td>
                         <td>{{$group->name}}</td>
-                        <td>{{$group->active == 1 ? 'yes' : 'no'}}</td>
+                        <td class="text-center">{{$group->active == 1 ? 'yes' : 'no'}}</td>
                         <td>{{$group->website}}</td>
                         <td>{{$group->description}}</td>
                         <td>{{$group->created_at}}</td>
