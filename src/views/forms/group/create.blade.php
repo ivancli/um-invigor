@@ -6,8 +6,10 @@
     </ul>
 @endif
 
-{!! Form::open(array('url' => 'um/group', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.group.update', 'method'=>'post')) !!}
 @include('um::partial_forms.group')
-{!! Form::submit('Create', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/group')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{route('um.group.index')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}

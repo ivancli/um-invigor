@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group required">
     {!! Form::label('name', 'Name', array('class' => 'control-label')) !!}
     {!! Form::text('name', null, array('class' => 'form-control')) !!}
 </div>

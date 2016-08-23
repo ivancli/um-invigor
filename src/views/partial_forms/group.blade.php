@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group required">
     {!! Form::label('name', 'Name', array('class' => 'control-label')) !!}
     {!! Form::text('name', null, array('class' => 'form-control')) !!}
 </div>
@@ -6,7 +6,7 @@
     {!! Form::label('active', 'Is active', array('class' => 'control-label')) !!}
     {!! Form::checkbox('active', '1', null) !!}
 </div>
-<div class="form-group">
+<div class="form-group required">
     {!! Form::label('website', 'Website', array('class' => 'control-label')) !!}
     {!! Form::text('website', null, array('class' => 'form-control')) !!}
 </div>

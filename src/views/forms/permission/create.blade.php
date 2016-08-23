@@ -6,8 +6,10 @@
     </ul>
 @endif
 
-{!! Form::open(array('url' => 'um/permission', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.permission.update', 'method'=>'post')) !!}
 @include('um::partial_forms.permission')
-{!! Form::submit('Create', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/permission')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{route('um.permission.index')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}

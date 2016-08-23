@@ -14,14 +14,14 @@ class InitialSeeder extends Seeder
                 'password' => bcrypt('secret'),
         ]);
 
-        $roleId = DB::table('{{$rolesTable}}')->insertGetId([
-                'name' => 'super_admin',
-                'display_name' => 'Super admin',
-        ]);
+        $superAdmin = new \Invigor\UM\UMRole();
+        $superAdmin->name = "super_admin";
+        $superAdmin->display_name = "Super Admin";
+        $superAdmin->save();
 
         DB::table('{{$roleUserTable}}')->insert([
                 'user_id' => $userId,
-                'role_id' => $roleId,
+                'role_id' => $superAdmin->id,
         ]);
 
         /* parent permissions */
@@ -130,5 +130,8 @@ class InitialSeeder extends Seeder
         $deletePermission->display_name = "Delete Permission";
         $deletePermission->parent_id = $managePermission->id;
         $deletePermission->save();
+
+        //attach permissions
+        $superAdmin->attachPermissions(array($manageUser, $manageGroup, $manageRole, $managePermission));
     }
 }

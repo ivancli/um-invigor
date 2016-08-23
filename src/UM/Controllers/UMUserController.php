@@ -17,12 +17,11 @@ class UMUserController extends Controller
 
     public function __construct()
     {
+        $this->userModel = Config::get('auth.providers.users.model');
         $this->middleware('permission:create_user', ['only' => ['create', 'store']]);
         $this->middleware('permission:read_user', ['only' => ['index', 'show']]);
         $this->middleware('permission:update_user', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete_user', ['only' => ['destroy']]);
-
-        $this->userModel = Config::get('auth.providers.users.model');
     }
 
     /**
@@ -36,7 +35,7 @@ class UMUserController extends Controller
     {
         if ($request->has('search')) {
             $search = $request->get('search');
-            $users = (new $this->userModel)::where('name', 'LIKE', "%$search%")->orwhere('email', 'LIKE', "%$search%")->paginate(10);
+            $users = (new $this->userModel)::where('name', 'LIKE', "%{$search['value']}%")->orwhere('email', 'LIKE', "%{$search['value']}%")->paginate(10);
         } else {
             $users = (new $this->userModel)::paginate(10);
         }
@@ -44,6 +43,13 @@ class UMUserController extends Controller
         $status = true;
         $length = count($users);
         if ($request->ajax()) {
+            dd($request->all());
+            $output = new \stdClass();
+            $output->draw = $request->has('draw') ? $request->get('draw') : 0;
+            $output->recordsTotal = (new $this->userModel)::count();
+            
+
+
             if ($request->wantsJson()) {
                 return response()->json(compact(['status', 'users', 'length', 'groups']));
             } else {
@@ -53,7 +59,8 @@ class UMUserController extends Controller
             if (is_null($view)) {
                 $view = 'um::user.index';
             }
-            return view($view)->with(compact(['users', 'status', 'length', 'groups']));
+//            return view($view)->with(compact(['users', 'status', 'length', 'groups']));
+            return view($view);
         }
     }
 

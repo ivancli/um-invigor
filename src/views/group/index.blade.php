@@ -4,14 +4,14 @@
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-6">
-                    <form action="{{url("um/group")}}" method="get" class="form-inline">
+                    <form action="{{route("um.group.index")}}" method="get" class="form-inline">
                         <label for="txt-search">Name/Display name</label>&nbsp;
                         <input type="text" class="form-control" id="txt-search" name="search" value="">
                         <button class="btn btn-default btn-sm">Search</button>
                     </form>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="{{url("um/group/create")}}" class="btn btn-default btn-sm">Create new group</a>
+                    <a href="{{route("um.group.create")}}" class="btn btn-default btn-sm">Create new group</a>
                 </div>
             </div>
             <table class="table table-bordered table-hover table-striped">
@@ -38,10 +38,13 @@
                         <td>{{$group->created_at}}</td>
                         <td>{{$group->updated_at}}</td>
                         <td class="text-center">
-                            <a href="{{url("um/group/{$group->id}/edit")}}" class="btn btn-default btn-sm">
+                            <a href="{{route("um.group.show", $group->id)}}" class="btn btn-default btn-sm">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </a>
+                            <a href="{{route("um.group.edit", $group->id)}}" class="btn btn-default btn-sm">
                                 <i class="glyphicon glyphicon-pencil"></i>
                             </a>
-                            {!! Form::model($group, array('url' => array('um/group', $group->id), 'method'=>'delete', 'style'=>'display:inline-block', "onsubmit"=>"return confirm('Do you want to delete this group?')")) !!}
+                            {!! Form::model($group, array('route' => array('um.group.destroy', $group->id), 'method'=>'delete', 'style'=>'display:inline-block', "onsubmit"=>"return confirm('Do you want to delete this group?')")) !!}
                             {!! Form::hidden('id', null, array('class' => 'form-control')) !!}
                             <button class="btn btn-default btn-sm"><i class="glyphicon glyphicon-remove"></i></button>
                             {!! Form::close() !!}

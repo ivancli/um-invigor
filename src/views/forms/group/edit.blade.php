@@ -1,4 +1,6 @@
-<p>{{count($group->users)}} user(s) in this group.</p>
+<div class="alert alert-info" role="alert">
+    <strong>{{count($group->users)}}</strong> {{str_plural('user', count($group->users))}} in this group.
+</div>
 @if(isset($errors))
     <ul class="text-danger">
         @foreach ($errors->all('<li>:message</li>') as $message)
@@ -7,8 +9,10 @@
     </ul>
 @endif
 
-{!! Form::model($group, array('url' => array('um/group', $group->id), 'method'=>'put')) !!}
+{!! Form::model($group, array('route' => array('um.group.update', $group->id), 'method'=>'put')) !!}
 @include('um::partial_forms.group')
-{!! Form::submit('Save', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/group')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Save', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{route('um.group.index')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}

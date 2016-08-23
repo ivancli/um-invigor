@@ -6,10 +6,12 @@
     </ul>
 @endif
 
-{!! Form::open(array('url' => 'um/user', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.user.store', 'method'=>'post')) !!}
 @include('um::partial_forms.user')
-{!! Form::submit('Create', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/user')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{route('um.user.index')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}
 
 

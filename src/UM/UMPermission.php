@@ -24,7 +24,7 @@ class UMPermission extends Model implements UMPermissionInterface
      */
     protected $table;
 
-    protected $fillable = ['name', 'display_name', 'description'];
+    protected $fillable = ['name', 'display_name', 'description', 'parent_id'];
 
     /**
      * Creates a new instance of the model.

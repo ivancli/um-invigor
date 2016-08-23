@@ -6,8 +6,10 @@
     </ul>
 @endif
 
-{!! Form::model($user, array('url' => array('um/user', $user->id), 'method'=>'put')) !!}
+{!! Form::model($user, array('route' => array('um.user.update', $user->id), 'method'=>'put')) !!}
 @include('um::partial_forms.user')
-{!! Form::submit('Save', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/user')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Save', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{url('um/user')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}

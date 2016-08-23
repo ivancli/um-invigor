@@ -59,10 +59,11 @@ class UMPermissionController extends Controller
     public function create($view = null)
     {
         $roles = UMRole::pluck('display_name', 'id');
+        $permissions = UMPermission::pluck('display_name', 'id');
         if (is_null($view)) {
             $view = 'um::permission.create';
         }
-        return view($view)->with(compact(['roles']));
+        return view($view)->with(compact(['roles', 'permissions']));
     }
 
     /**
@@ -168,11 +169,18 @@ class UMPermissionController extends Controller
     {
         try {
             $permission = UMPermission::findOrFail($id);
+
+            /*parent permission should not be the child of its child permissions*/
+            $exceptIDs = [$permission->id];
+            if (!is_null($permission->childPerms)) {
+                $exceptIDs = array_merge($permission->childPerms->pluck('id')->toArray(), $exceptIDs);
+            }
+            $permissions = UMPermission::all()->except($exceptIDs)->pluck('display_name', 'id');
             $roles = UMRole::pluck('display_name', 'id');
             if (is_null($view)) {
                 $view = "um::permission.edit";
             }
-            return view($view)->with(compact(['permission', 'roles']));
+            return view($view)->with(compact(['permission', 'roles', 'permissions']));
         } catch (ModelNotFoundException $e) {
             abort(404, "Page not found");
             return false;
@@ -208,7 +216,6 @@ class UMPermissionController extends Controller
             try {
                 $permission = UMPermission::findOrFail($id);
                 $permission->update($request->all());
-
                 /* attach role */
                 if ($request->has('role_id') && is_array($request->get('role_id'))) {
                     $permission->roles()->sync($request->get('role_id'));

@@ -6,8 +6,10 @@
     </ul>
 @endif
 
-{!! Form::open(array('url' => 'um/role', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.role.update', 'method'=>'post')) !!}
 @include('um::partial_forms.role')
-{!! Form::submit('Create', ["class"=>"btn btn-default btn-sm"]) !!}
-<a href="{{url('um/role')}}" class="btn btn-default btn-sm">Cancel</a>
+<div class="text-right">
+    {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}
+    <a href="{{route('um.role.index')}}" class="btn btn-default btn-sm">Cancel</a>
+</div>
 {!! Form::close() !!}

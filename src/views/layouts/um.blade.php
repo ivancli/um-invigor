@@ -18,8 +18,18 @@
 {{--delete_permission - {{dump(Auth::user()->can('delete_permission'))}}--}}
 
 
-
-<link rel="stylesheet" href="{{Config::get('um.bootstrap_css_path')}}">
+<link rel="stylesheet" href="{{asset('css/main.css')}}">
+@yield('styles')
+<style>
+    .required label:after {
+        content: " *";
+        color: #ff0000;
+    }
+</style>
 <div class="container">
     @yield('content')
 </div>
+
+
+<script type="text/javascript" src="{{asset('js/main.js')}}"></script>
+@yield('scripts')

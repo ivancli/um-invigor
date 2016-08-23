@@ -1,8 +1,8 @@
-<div class="form-group">
+<div class="form-group required">
     {!! Form::label('name', 'Name', array('class' => 'control-label')) !!}
     {!! Form::text('name', null, array('class' => 'form-control')) !!}
 </div>
-<div class="form-group">
+<div class="form-group required">
     {!! Form::label('email', 'Email', array('class' => 'control-label')) !!}
     {!! Form::email('email', null, array('class' => 'form-control')) !!}
 </div>
