@@ -8,7 +8,7 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Active</th>
-                    <th>Website</th>
+                    <th>URL</th>
                     <th>Description</th>
                     <th>Created at</th>
                     <th>Updated at</th>
@@ -51,8 +51,8 @@
                         "data": "active"
                     },
                     {
-                        "name": "website",
-                        "data": "website"
+                        "name": "url",
+                        "data": "url"
                     },
                     {
                         "name": "description",

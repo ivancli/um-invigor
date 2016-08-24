@@ -7,8 +7,8 @@
     {!! Form::checkbox('active', '1', null) !!}
 </div>
 <div class="form-group required">
-    {!! Form::label('website', 'Website', array('class' => 'control-label')) !!}
-    {!! Form::text('website', null, array('class' => 'form-control')) !!}
+    {!! Form::label('url', 'URL', array('class' => 'control-label')) !!}
+    {!! Form::text('url', null, array('class' => 'form-control')) !!}
 </div>
 <div class="form-group">
     {!! Form::label('description', 'Description', array('class' => 'control-label')) !!}

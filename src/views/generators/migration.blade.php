@@ -17,7 +17,7 @@ class UmSetupTables extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->boolean('active')->default(0)->index();
-            $table->string('website', 2083)->nullable();
+            $table->string('url', 2083)->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });

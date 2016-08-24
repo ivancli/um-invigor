@@ -126,8 +126,16 @@ class ControllersCommand extends Command
         $controllerFile = $folderPath . '/' . $className . ".php";
 
         $data = compact(['className']);
-
-        $output = $this->laravel->view->make('um::generators.controllers.extend_controller')->with($data)->render();
+        switch ($className) {
+            case "GroupController":
+                $output = $this->laravel->view->make('um::generators.controllers.group_controller')->render();
+                break;
+            case "UserController":
+                $output = $this->laravel->view->make('um::generators.controllers.user_controller')->render();
+                break;
+            default:
+                $output = $this->laravel->view->make('um::generators.controllers.extend_controller')->with($data)->render();
+        }
         if (!is_dir($folderPath)) {
             mkdir($folderPath);
         }
