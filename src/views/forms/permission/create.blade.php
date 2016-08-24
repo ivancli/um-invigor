@@ -6,7 +6,7 @@
     </ul>
 @endif
 
-{!! Form::open(array('route' => 'um.permission.update', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.permission.store', 'method'=>'post')) !!}
 @include('um::partial_forms.permission')
 <div class="text-right">
     {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}

@@ -26,6 +26,7 @@ class UMRole extends Model implements UMRoleInterface
 
     protected $fillable = ['name', 'display_name', 'description'];
 
+    protected $appends = ['urls'];
     /**
      * Creates a new instance of the model.
      *

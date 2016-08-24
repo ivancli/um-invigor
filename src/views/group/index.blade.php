@@ -2,19 +2,7 @@
 @section('content')
     <div class="row">
         <div class="col-sm-12">
-            <div class="row">
-                <div class="col-sm-6">
-                    <form action="{{route("um.group.index")}}" method="get" class="form-inline">
-                        <label for="txt-search">Name/Display name</label>&nbsp;
-                        <input type="text" class="form-control" id="txt-search" name="search" value="">
-                        <button class="btn btn-default btn-sm">Search</button>
-                    </form>
-                </div>
-                <div class="col-sm-6 text-right">
-                    <a href="{{route("um.group.create")}}" class="btn btn-default btn-sm">Create new group</a>
-                </div>
-            </div>
-            <table class="table table-bordered table-hover table-striped">
+            <table id="tbl-groups" class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -28,34 +16,114 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($groups as $group)
-                    <tr>
-                        <td>{{$group->id}}</td>
-                        <td>{{$group->name}}</td>
-                        <td class="text-center">{{$group->active == 1 ? 'yes' : 'no'}}</td>
-                        <td>{{$group->website}}</td>
-                        <td>{{$group->description}}</td>
-                        <td>{{$group->created_at}}</td>
-                        <td>{{$group->updated_at}}</td>
-                        <td class="text-center">
-                            <a href="{{route("um.group.show", $group->id)}}" class="btn btn-default btn-sm">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </a>
-                            <a href="{{route("um.group.edit", $group->id)}}" class="btn btn-default btn-sm">
-                                <i class="glyphicon glyphicon-pencil"></i>
-                            </a>
-                            {!! Form::model($group, array('route' => array('um.group.destroy', $group->id), 'method'=>'delete', 'style'=>'display:inline-block', "onsubmit"=>"return confirm('Do you want to delete this group?')")) !!}
-                            {!! Form::hidden('id', null, array('class' => 'form-control')) !!}
-                            <button class="btn btn-default btn-sm"><i class="glyphicon glyphicon-remove"></i></button>
-                            {!! Form::close() !!}
-                        </td>
-                    </tr>
-                @endforeach
                 </tbody>
             </table>
-            <div class="text-right">
-                {{$groups->appends(Request::only('search'))->links()}}
-            </div>
         </div>
     </div>
+@stop
+
+@section('scripts')
+    <script type="text/javascript">
+        var tblGroups;
+        $(function () {
+            jQuery.fn.dataTable.Api.register( 'processing()', function ( show ) {
+                return this.iterator( 'table', function ( ctx ) {
+                    ctx.oApi._fnProcessingDisplay( ctx, show );
+                } );
+            } );
+            tblGroups = $("#tbl-groups").DataTable({
+                "pagingType": "full_numbers",
+                "processing": true,
+                "serverSide": true,
+                "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'<'link-create'>><'col-sm-7'p>>",
+                "ajax": "{{route('um.group.index')}}",
+                "columns": [
+                    {
+                        "name": "id",
+                        "data": "id"
+                    },
+                    {
+                        "name": "name",
+                        "data": "name"
+                    },
+                    {
+                        "name": "active",
+                        "data": "active"
+                    },
+                    {
+                        "name": "website",
+                        "data": "website"
+                    },
+                    {
+                        "name": "description",
+                        "data": "description"
+                    },
+                    {
+                        "name": "created_at",
+                        "data": "created_at"
+                    },
+                    {
+                        "name": "updated_at",
+                        "data": "updated_at"
+                    },
+                    {
+                        "class": "text-center",
+                        "sortable": false,
+                        "data": function (data) {
+                            return $("<div>").append(
+                                    $("<a>").attr({
+                                        "href": data.urls.show
+                                    }).addClass("text-muted").append(
+                                            $("<i>").addClass("glyphicon glyphicon-search")
+                                    ),
+                                    "&nbsp;",
+                                    $("<a>").attr({
+                                        "href": data.urls.edit
+                                    }).addClass("text-muted").append(
+                                            $("<i>").addClass("glyphicon glyphicon-pencil")
+                                    ),
+                                    "&nbsp;",
+                                    $("<a>").attr({
+                                        "href": "#",
+                                        "onclick": "deleteGroup('" + data.urls.delete + "')"
+                                    }).addClass('text-danger').append(
+                                            $("<i>").addClass("glyphicon glyphicon-trash")
+                                    )
+                            ).html();
+                        }
+                    }
+                ]
+            });
+            $("div.link-create").append(
+                    $("<a>").attr({
+                        "href": "{{route('um.group.create')}}"
+                    }).addClass('btn btn-default').text("Create Group")
+            )
+        });
+
+        function deleteGroup(url, callback) {
+            if (confirm("Do you want to delete this group?")) {
+                tblGroups.processing(true);
+                $.ajax({
+                    "url": url,
+                    "type": "delete",
+                    "data": {
+                        "_token": "{!! csrf_token() !!}"
+                    },
+                    'cache': false,
+                    'dataType': "json",
+                    "success": function (response) {
+                        tblGroups.processing(false);
+                        if ($.isFunction(callback)) {
+                            callback(response);
+                        }
+                        tblGroups.ajax.reload(null, false);
+                    },
+                    "error": function () {
+                        alert("Unable to delete group, please try again later.");
+                    }
+                })
+            }
+        }
+    </script>
 @stop

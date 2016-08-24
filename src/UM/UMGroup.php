@@ -26,6 +26,8 @@ class UMGroup extends Model implements UMGroupInterface
     protected $table;
 
     protected $fillable = ['name', 'active', 'website', 'description'];
+
+    protected $appends = array('urls');
     /**
      * Creates a new instance of the model.
      *

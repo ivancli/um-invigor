@@ -32,25 +32,45 @@ class UMGroupController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $groups = UMGroup::where('name', 'LIKE', "%$search%")->orwhere('website', 'LIKE', "%$search%")->paginate(10);
-        } else {
-            $groups = UMGroup::paginate(10);
-        }
-        $status = true;
-        $length = count($groups);
+
         if ($request->ajax()) {
-            if ($request->wantsJson()) {
-                return response()->json(compact(['status', 'groups', 'length']));
-            } else {
-                return $groups;
+            $groups = UMGroup::when($request->has('start'), function ($query) use ($request) {
+                return $query->skip($request->get('start'));
+            })
+                ->when($request->has('length'), function ($query) use ($request) {
+                    return $query->take($request->get('length'));
+                })
+                ->when($request->has('search'), function ($query) use ($request) {
+                    return $query->where('name', 'LIKE', "%{$request->get('search')['value']}%")
+                        ->orwhere('website', 'LIKE', "%{$request->get('search')['value']}%");
+                })
+                ->when($request->has('order') && is_array($request->get('order')), function ($query) use ($request) {
+                    $order = $request->get('order');
+                    $columns = $request->get('columns');
+                    foreach ($order as $index => $ord) {
+                        if (isset($ord['column']) && isset($columns[$ord['column']])) {
+                            $name = $columns[$ord['column']]['name'];
+                            $direction = $ord['dir'];
+                            $query->orderBy($name, $direction);
+                        }
+                    }
+                    return $query;
+                })->get();
+            $output = new \stdClass();
+            $output->draw = (int)($request->has('draw') ? $request->get('draw') : 0);
+            $output->recordsTotal = UMGroup::count();
+            if($request->has('search') && $request->get('search')['value'] != ''){
+                $output->recordsFiltered = $groups->count();
+            }else{
+                $output->recordsFiltered = UMGroup::count();
             }
+            $output->data = $groups->toArray();
+            return response()->json($output);
         } else {
             if (is_null($view)) {
                 $view = 'um::group.index';
             }
-            return view($view)->with(compact(['groups', 'status', 'length']));
+            return view($view);
         }
     }
 

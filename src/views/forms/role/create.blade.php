@@ -6,7 +6,7 @@
     </ul>
 @endif
 
-{!! Form::open(array('route' => 'um.role.update', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.role.store', 'method'=>'post')) !!}
 @include('um::partial_forms.role')
 <div class="text-right">
     {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}

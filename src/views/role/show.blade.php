@@ -1,7 +1,9 @@
 @extends('um::layouts.um')
 @section('content')
     <h3>View Role:</h3>
-    <p>{{count($role->users)}} {{str_plural('user', count($role->users))}} with this role.</p>
+    <div class="alert alert-info" role="alert">
+        <strong>{{count($role->users)}}</strong> {{str_plural('user', count($role->users))}} with this role.
+    </div>
     <table class="table table-bordered table-hover table-striped">
         <tbody>
         <tr>
@@ -31,13 +33,12 @@
         <tr>
             <th>Permissions</th>
             <td>
-                <ul>
-                    @foreach($role->perms as $permission)
-                        <li>
-                            <a href="{{route("um.permission.show", [$permission->id])}}">{{$permission->display_name}}</a>
-                        </li>
-                    @endforeach
-                </ul>
+                @foreach($role->perms as $index=>$permission)
+                    <a href="{{$permission->urls['show']}}">{{$permission->display_name}}</a>
+                    @if($index != count($role->perms)-1)
+                        ,
+                    @endif
+                @endforeach
             </td>
         </tr>
         </tbody>

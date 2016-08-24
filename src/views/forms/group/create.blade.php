@@ -6,7 +6,7 @@
     </ul>
 @endif
 
-{!! Form::open(array('route' => 'um.group.update', 'method'=>'post')) !!}
+{!! Form::open(array('route' => 'um.group.store', 'method'=>'post')) !!}
 @include('um::partial_forms.group')
 <div class="text-right">
     {!! Form::submit('Create', ["class"=>"btn btn-primary btn-sm"]) !!}

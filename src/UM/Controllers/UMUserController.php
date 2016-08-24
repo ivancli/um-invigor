@@ -3,7 +3,6 @@
 namespace Invigor\UM\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -35,7 +34,7 @@ class UMUserController extends Controller
     public function index(Request $request, $view = null)
     {
         if ($request->ajax()) {
-            $users = User::when($request->has('start'), function ($query) use ($request) {
+            $users = (new $this->userModel)::when($request->has('start'), function ($query) use ($request) {
                 return $query->skip($request->get('start'));
             })
                 ->when($request->has('length'), function ($query) use ($request) {
@@ -58,50 +57,26 @@ class UMUserController extends Controller
                     return $query;
                 })->get();
             $users->each(function ($user, $key) {
-                $user->show_url = route('um.user.show', $user->id);
-                $user->edit_url = route('um.user.edit', $user->id);
-                $user->delete_url = route('um.user.destroy', $user->id);
+                $user->urls = array(
+                    "show" => route('um.user.show', $user->id),
+                    "edit" => route('um.user.edit', $user->id),
+                    "delete" => route('um.user.destroy', $user->id)
+                );
             });
             $output = new \stdClass();
             $output->draw = (int)($request->has('draw') ? $request->get('draw') : 0);
-            $output->recordsTotal = User::count();
-            $output->recordsFiltered = User::count();
+            $output->recordsTotal = (new $this->userModel)::count();
+            if ($request->has('search') && $request->get('search')['value'] != '') {
+                $output->recordsFiltered = $users->count();
+            } else {
+                $output->recordsFiltered = (new $this->userModel)::count();
+            }
             $output->data = $users->toArray();
             return response()->json($output);
         } else {
             if (is_null($view)) {
                 $view = 'um::user.index';
             }
-            return view($view);
-        }
-
-
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $users = (new $this->userModel)::where('name', 'LIKE', "%{$search['value']}%")->orwhere('email', 'LIKE', "%{$search['value']}%")->paginate(10);
-        } else {
-            $users = (new $this->userModel)::paginate(10);
-        }
-
-        $status = true;
-        $length = count($users);
-        if ($request->ajax()) {
-            dd($request->all());
-            $output = new \stdClass();
-            $output->draw = $request->has('draw') ? $request->get('draw') : 0;
-            $output->recordsTotal = (new $this->userModel)::count();
-
-
-            if ($request->wantsJson()) {
-                return response()->json(compact(['status', 'users', 'length', 'groups']));
-            } else {
-                return $users;
-            }
-        } else {
-            if (is_null($view)) {
-                $view = 'um::user.index';
-            }
-//            return view($view)->with(compact(['users', 'status', 'length', 'groups']));
             return view($view);
         }
     }

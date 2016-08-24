@@ -41,6 +41,15 @@ trait UMUserTrait
         Cache::tags(Config::get('um.role_user_table'))->flush();
         return $result;
     }
+
+    public function getUrlsAttribute()
+    {
+        return array(
+            "show" => route("um.user.show", $this->id),
+            "edit" => route("um.user.edit", $this->id),
+            "delete" => route("um.user.destroy", $this->id),
+        );
+    }
     
     /**
      * Many-to-Many relations with Role.

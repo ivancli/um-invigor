@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Cache;
 
 trait UMRoleTrait
 {
+    public function getUrlsAttribute()
+    {
+        return array(
+            "show" => route("um.role.show", $this->id),
+            "edit" => route("um.role.edit", $this->id),
+            "delete" => route("um.role.destroy", $this->id),
+        );
+    }
+
     //Big block of caching functionality.
     public function cachedPermissions()
     {

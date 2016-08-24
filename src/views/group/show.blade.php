@@ -1,7 +1,9 @@
 @extends('um::layouts.um')
 @section('content')
     <h3>Show Group</h3>
-    <p>{{count($group->users)}} {{str_plural('user', count($group->users))}} in this group.</p>
+    <div class="alert alert-info" role="alert">
+        <strong>{{count($group->users)}}</strong> {{str_plural('user', count($group->users))}} in this group.
+    </div>
     <table class="table table-bordered table-hover table-striped">
         <tbody>
         <tr>
@@ -32,7 +34,7 @@
             <th>Users</th>
             <td>
                 @foreach($group->users as $index=>$user)
-                    <a href="{{route("um.user.show", $user->id)}}">{{$user->name}}</a>
+                    <a href="{{$user->urls['show']}}">{{$user->name}}</a>
                     @if($index != count($group->users)-1)
                         ,
                     @endif

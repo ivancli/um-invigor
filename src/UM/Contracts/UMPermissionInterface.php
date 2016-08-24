@@ -10,7 +10,7 @@
 
 interface UMPermissionInterface
 {
-    
+    public function getUrlsAttribute();
     /**
      * Many-to-Many relations with role model.
      *

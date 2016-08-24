@@ -28,25 +28,44 @@ class UMPermissionController extends Controller
      */
     public function index(Request $request, $view = null)
     {
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $permissions = UMPermission::where('name', 'LIKE', "%$search%")->orwhere('display_name', 'LIKE', "%$search%")->paginate(10);
-        } else {
-            $permissions = UMPermission::paginate(10);
-        }
-        $status = true;
-        $length = count($permissions);
         if ($request->ajax()) {
-            if ($request->wantsJson()) {
-                return response()->json(compact(['status', 'permissions', 'length']));
-            } else {
-                return $permissions;
+            $permissions = UMPermission::with('parentPerm')->when($request->has('start'), function ($query) use ($request) {
+                return $query->skip($request->get('start'));
+            })
+                ->when($request->has('length'), function ($query) use ($request) {
+                    return $query->take($request->get('length'));
+                })
+                ->when($request->has('search'), function ($query) use ($request) {
+                    return $query->where('name', 'LIKE', "%{$request->get('search')['value']}%")
+                        ->orwhere('display_name', 'LIKE', "%{$request->get('search')['value']}%");
+                })
+                ->when($request->has('order') && is_array($request->get('order')), function ($query) use ($request) {
+                    $order = $request->get('order');
+                    $columns = $request->get('columns');
+                    foreach ($order as $index => $ord) {
+                        if (isset($ord['column']) && isset($columns[$ord['column']])) {
+                            $name = $columns[$ord['column']]['name'];
+                            $direction = $ord['dir'];
+                            $query->orderBy($name, $direction);
+                        }
+                    }
+                    return $query;
+                })->get();
+            $output = new \stdClass();
+            $output->draw = (int)($request->has('draw') ? $request->get('draw') : 0);
+            $output->recordsTotal = UMPermission::count();
+            if($request->has('search') && $request->get('search')['value'] != ''){
+                $output->recordsFiltered = $permissions->count();
+            }else{
+                $output->recordsFiltered = UMPermission::count();
             }
+            $output->data = $permissions->toArray();
+            return response()->json($output);
         } else {
             if (is_null($view)) {
                 $view = 'um::permission.index';
             }
-            return view($view)->with(compact(['permissions', 'status', 'length']));
+            return view($view);
         }
     }
 

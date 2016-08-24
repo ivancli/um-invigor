@@ -13,5 +13,3 @@
     <a href="{{route('um.user.index')}}" class="btn btn-default btn-sm">Cancel</a>
 </div>
 {!! Form::close() !!}
-
-

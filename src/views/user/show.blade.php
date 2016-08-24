@@ -2,7 +2,9 @@
 
 @section('content')
     <h3>View User:</h3>
-    <p>{{count($user->roles)}} {{str_plural('role', count($user->roles))}} assigned to this user.</p>
+    <div class="alert alert-info" role="alert">
+        <strong>{{count($user->roles)}}</strong> {{str_plural('role', count($user->roles))}} assigned to this user.
+    </div>
     <table class="table table-bordered table-hover table-striped">
         <tbody>
         @foreach($user->toArray() as $field=>$value)
@@ -21,7 +23,7 @@
             <th>Roles</th>
             <td>
                 @foreach($user->roles as $index=>$role)
-                    <a href="{{route("um.role.show", [$role->id])}}">{{$role->display_name}}</a>
+                    <a href="{{$role->urls['show']}}">{{$role->display_name}}</a>
                     @if($index!=count($user->roles) - 1)
                         ,
                     @endif
@@ -32,7 +34,7 @@
             <th>Groups</th>
             <td>
                 @foreach($user->groups as $index=>$group)
-                    <a href="{{route("um.group.show", [$group->id])}}">{{$group->name}}</a>
+                    <a href="{{$group->urls['show']}}">{{$group->name}}</a>
                     @if($index!=count($user->groups) - 1)
                         ,
                     @endif

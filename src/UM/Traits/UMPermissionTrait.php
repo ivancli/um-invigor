@@ -32,6 +32,15 @@ trait UMPermissionTrait
         return $this->hasMany(Config::get('um.permission'), 'parent_id', 'id');
     }
 
+    public function getUrlsAttribute()
+    {
+        return array(
+            "show" => route("um.permission.show", $this->id),
+            "edit" => route("um.permission.edit", $this->id),
+            "delete" => route("um.permission.destroy", $this->id),
+        );
+    }
+
     /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete

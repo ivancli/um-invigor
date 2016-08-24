@@ -10,6 +10,6 @@
 @include('um::partial_forms.user')
 <div class="text-right">
     {!! Form::submit('Save', ["class"=>"btn btn-primary btn-sm"]) !!}
-    <a href="{{url('um/user')}}" class="btn btn-default btn-sm">Cancel</a>
+    <a href="{{route('um.user.index')}}" class="btn btn-default btn-sm">Cancel</a>
 </div>
 {!! Form::close() !!}

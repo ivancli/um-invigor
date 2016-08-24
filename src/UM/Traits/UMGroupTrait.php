@@ -23,6 +23,14 @@ trait UMGroupTrait
         return $this->belongsToMany(Config::get('um.user'), Config::get('um.group_user_table'), Config::get('um.group_foreign_key'), Config::get('um.user_foreign_key'));
     }
 
+    public function getUrlsAttribute()
+    {
+        return array(
+            "show" => route("um.group.show", $this->id),
+            "edit" => route("um.group.edit", $this->id),
+            "delete" => route("um.group.destroy", $this->id),
+        );
+    }
     /**
      * Attach a user to current group.
      *

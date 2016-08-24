@@ -10,6 +10,7 @@
 
 interface UMRoleInterface
 {
+    public function getUrlsAttribute();
     /**
      * Many-to-Many relations with the user model.
      *

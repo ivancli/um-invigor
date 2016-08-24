@@ -6,18 +6,6 @@
 @section('content')
     <div class="row">
         <div class="col-sm-12">
-            <div class="row">
-                <div class="col-sm-6">
-                    <form action="{{route("um.user.index")}}" method="get" class="form-inline">
-                        <label for="txt-search">Name/email</label>&nbsp;
-                        <input type="text" class="form-control" id="txt-search" name="search" value="">
-                        <button class="btn btn-default btn-sm">Search</button>
-                    </form>
-                </div>
-                <div class="col-sm-6 text-right">
-                    <a href="{{route("um.user.create")}}" class="btn btn-default btn-sm">Create new user</a>
-                </div>
-            </div>
             <table class="table table-bordered table-hover table-striped" id="tbl-users">
                 <thead>
                 <tr>
@@ -26,7 +14,7 @@
                     <th>Email</th>
                     <th>Created at</th>
                     <th>Updated at</th>
-                    <th width="15%"></th>
+                    <th width="10%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -50,7 +38,7 @@
                 "pagingType": "full_numbers",
                 "processing": true,
                 "serverSide": true,
-                "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'><'col-sm-7'p>>",
+                "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'<'link-create'>><'col-sm-7'p>>",
                 "ajax": "{{route('um.user.index')}}",
                 "columns": [
                     {
@@ -79,20 +67,20 @@
                         "data": function (data) {
                             return $("<div>").append(
                                     $("<a>").attr({
-                                        "href": data.show_url
+                                        "href": data.urls.show
                                     }).addClass("text-muted").append(
                                             $("<i>").addClass("glyphicon glyphicon-search")
                                     ),
                                     "&nbsp;",
                                     $("<a>").attr({
-                                        "href": data.edit_url
+                                        "href": data.urls.edit
                                     }).addClass("text-muted").append(
                                             $("<i>").addClass("glyphicon glyphicon-pencil")
                                     ),
                                     "&nbsp;",
                                     $("<a>").attr({
                                         "href": "#",
-                                        "onclick": "deleteUser('" + data.delete_url + "')"
+                                        "onclick": "deleteUser('" + data.urls.delete + "')"
                                     }).addClass('text-danger').append(
                                             $("<i>").addClass("glyphicon glyphicon-trash")
                                     )
@@ -101,7 +89,12 @@
                         }
                     }
                 ]
-            })
+            });
+            $("div.link-create").append(
+                    $("<a>").attr({
+                        "href": "{{route('um.user.create')}}"
+                    }).addClass('btn btn-default').text("Create User")
+            )
         });
 
         function deleteUser(url, callback) {
@@ -123,7 +116,7 @@
                         tblUsers.ajax.reload(null, false);
                     },
                     "error": function () {
-
+                        alert("Unable to delete user, please try again later.");
                     }
                 })
             }
