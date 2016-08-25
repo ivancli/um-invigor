@@ -82,20 +82,20 @@
                         "data": function (data) {
                             return $("<div>").append(
                                     $("<a>").attr({
-                                        "href": data.show
+                                        "href": data.urls.show
                                     }).addClass("text-muted").append(
                                             $("<i>").addClass("glyphicon glyphicon-search")
                                     ),
                                     "&nbsp;",
                                     $("<a>").attr({
-                                        "href": data.edit
+                                        "href": data.urls.edit
                                     }).addClass("text-muted").append(
                                             $("<i>").addClass("glyphicon glyphicon-pencil")
                                     ),
                                     "&nbsp;",
                                     $("<a>").attr({
                                         "href": "#",
-                                        "onclick": "deletePermission('" + data.delete + "')"
+                                        "onclick": "deletePermission('" + data.urls.delete + "')"
                                     }).addClass('text-danger').append(
                                             $("<i>").addClass("glyphicon glyphicon-trash")
                                     )

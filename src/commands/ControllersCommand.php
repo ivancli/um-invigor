@@ -133,6 +133,12 @@ class ControllersCommand extends Command
             case "UserController":
                 $output = $this->laravel->view->make('um::generators.controllers.user_controller')->render();
                 break;
+            case "RoleController":
+                $output = $this->laravel->view->make('um::generators.controllers.role_controller')->render();
+                break;
+            case "PermissionController":
+                $output = $this->laravel->view->make('um::generators.controllers.permission_controller')->render();
+                break;
             default:
                 $output = $this->laravel->view->make('um::generators.controllers.extend_controller')->with($data)->render();
         }

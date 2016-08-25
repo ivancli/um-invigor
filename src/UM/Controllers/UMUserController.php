@@ -23,7 +23,6 @@ class UMUserController extends Controller
      * @param Request $request
      * @param null $format
      * @return \Illuminate\Http\Response|\stdClass
-     * @internal param null $view
      */
     public function index(Request $request, $format = null)
     {
@@ -77,7 +76,6 @@ class UMUserController extends Controller
     /**
      * Show the form for creating a new resource.
      * @return \Illuminate\Http\Response
-     * @internal param null $view
      */
     public function create()
     {
@@ -89,8 +87,6 @@ class UMUserController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @return bool|\Illuminate\Http\Response
-     * @internal param null $route
-     * @internal param null $view
      */
     public function store(Request $request)
     {
@@ -121,7 +117,6 @@ class UMUserController extends Controller
      * @param Request $request
      * @param  int $id
      * @return \Illuminate\Http\Response|string
-     * @internal param null $view
      */
     public function show(Request $request, $id)
     {
@@ -138,7 +133,6 @@ class UMUserController extends Controller
      *
      * @param  int $id
      * @return bool|\Illuminate\Http\Response
-     * @internal param null $view
      */
     public function edit($id)
     {
@@ -156,7 +150,6 @@ class UMUserController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
      * @return string
-     * @internal param null $route
      */
     public function update(Request $request, $id)
     {
@@ -196,7 +189,6 @@ class UMUserController extends Controller
      * @param Request $request
      * @param  int $id
      * @return bool
-     * @internal param null $route
      */
     public function destroy(Request $request, $id)
     {
