@@ -10,20 +10,19 @@ Please check [System/Project requirements and Assumptions](#system-project-requi
 ###Table of Content
 * [System/Project requirements and Assumptions](#system-project-requirements-and-assumptions)
 * [Installation Guide](#installation-guide)
-    * [Initial setup](#initial-setup)
-        * [composer.json - repo](#composer-json-repo)
-        * [composer.json - require-dev](#composer-json-require-dev)
-        * [composer update](#composer-update)
-        * [config/app.php - provider](#config-app-provider)
-        * [config/app.php - alias](#config-app-alias)
-        * [User model adds UMUserTrait](#user-model-user-trait)
-        * [Generate controllers](#generate-controller)
-        * [Generate migration](#generate-migration)
-        * [Migrate UM DB tables](#migrate-db)
-        * [Generate seeder and seeding](#generate-seeder-seeding)
-        * [vendor:publish - views](#vendor-publish-view)
-        * [Create view layout](#view-layout)
-        * [Required front-end resources](#front-end-resources)
+    * [composer.json - repo](#composer-json-repo)
+    * [composer.json - require-dev](#composer-json-require-dev)
+    * [composer update](#composer-update)
+    * [config/app.php - provider](#config-app-provider)
+    * [config/app.php - alias](#config-app-alias)
+    * [User model adds UMUserTrait](#user-model-user-trait)
+    * [Generate controllers](#generate-controller)
+    * [Generate migration](#generate-migration)
+    * [Migrate UM DB tables](#migrate-db)
+    * [Generate seeder and seeding](#generate-seeder-seeding)
+    * [vendor:publish - views](#vendor-publish-view)
+    * [Create view layout](#view-layout)
+    * [Required front-end resources](#front-end-resources)
 * [Default Package Routes](#default-package-routes)
     * [Default routes](#default-routes)
     * [User routes](#user-routes)
@@ -32,7 +31,7 @@ Please check [System/Project requirements and Assumptions](#system-project-requi
     * [Permission routes](#permission-routes)
 * [Controllers](#controllers)
     * [Controllers in _UM_ package](#controllers-in-um-package)
-    * [Controllers in _app_ folder](controllers-in-app-folder)
+    * [Controllers in _app_ folder](#controllers-in-app-folder)
 * [Middleware](#middleware)
     * [Sample usage of role in _routes_](#sample-ussage-of-role-in-routes)
     * [Sample usage of permission in _routes_](#sample-ussage-of-permission-in-routes)
@@ -51,11 +50,10 @@ Please check [System/Project requirements and Assumptions](#system-project-requi
 ---
 
 ###Installation Guide <a name="installation-guide"></a>
-#####Initial setup <a name="initial-setup"></a>
 
 In your Laravel project,
 
-1. Add a repository to _composer.json_ file _repositories_ array. <a name="composer-json-repo"></a>
+1.Add a repository to _composer.json_ file _repositories_ array. <a name="composer-json-repo"></a>
 
 ```json
 {
@@ -70,7 +68,7 @@ In your Laravel project,
 
 ---
 
-2. Add a dev requirement to _require-dev_ in _composer.json_. <a name="composer-json-require-dev"></a>
+2.Add a dev requirement to _require-dev_ in _composer.json_. <a name="composer-json-require-dev"></a>
 
 ```json
 {
@@ -82,11 +80,11 @@ In your Laravel project,
 
 ---
 
-3. Run `composer update` in project root folder.<a name="composer-update"></a>
+3.Run `composer update` in project root folder.<a name="composer-update"></a>
 
 ---
 
-4. Add the following code to _providers_ array in _config/app.php_ <a name="config-app-provider"></a>
+4.Add the following code to _providers_ array in _config/app.php_ <a name="config-app-provider"></a>
 
 ```php
 Invigor\UM\UMServiceProvider::class,
@@ -94,7 +92,7 @@ Invigor\UM\UMServiceProvider::class,
 
 ---
 
-5. Create aliases in _config/app.php_ by adding following code to _aliases_ array <a name="config-app-alias"></a>
+5.Create aliases in _config/app.php_ by adding following code to _aliases_ array <a name="config-app-alias"></a>
 
 ```php
 'UM' => Invigor\UM\UMFacade::class,
@@ -105,7 +103,7 @@ Invigor\UM\UMServiceProvider::class,
 
 ---
 
-6. Use user trait in default User model:<a name="user-model-user-trait"></a>
+6.Use user trait in default User model:<a name="user-model-user-trait"></a>
 
 ```php
 use Invigor\UM\Traits\UMUserTrait;
@@ -121,7 +119,7 @@ class User ...
 
 ---
 
-7. Generate controllers, in root folder of the project run: <a name="generate-controller"></a>
+7.Generate controllers, in root folder of the project run: <a name="generate-controller"></a>
 
 ```sh
 php artisan um:controller
@@ -129,7 +127,7 @@ php artisan um:controller
 
 ---
 
-8. Generate migration files, in root folder of the project run: <a name="generate-migration"></a>
+8.Generate migration files, in root folder of the project run: <a name="generate-migration"></a>
 
 ```sh
 php artisan um:migration
@@ -137,7 +135,7 @@ php artisan um:migration
 
 ---
 
-9. Migrate database tables <a name="migrate-db"></a>
+9.Migrate database tables <a name="migrate-db"></a>
 
 ```sh
 php artisan migrate
@@ -145,7 +143,7 @@ php artisan migrate
 
 ---
 
-10. Generate seeder and proceed seeding <a name="generate-seeder-seeding"></a>
+10.Generate seeder and proceed seeding <a name="generate-seeder-seeding"></a>
 
 ```sh
 php artisan um:seeder
@@ -156,7 +154,7 @@ php artisan um:seeder
 
 ---
 
-11. Include views <a name="vendor-publish-view"></a>
+11.Include views <a name="vendor-publish-view"></a>
 
 UM package provides comprehensive views to take care of CRUD of entities.
 By running the following command in root folder of the project, 
@@ -193,7 +191,7 @@ um
 ```
 ---
 
-12. View Layout <a name="view-layout"></a>
+12.View Layout <a name="view-layout"></a>
 
 The views described in [11](#vendor-publish-view) do NOT include any CSS nor JS resources.
 
@@ -222,7 +220,7 @@ views generated by vendor:publish
 
 ---
 
-13. Required Front-end Resources <a name="front-end-resources"></a>
+13.Required Front-end Resources <a name="front-end-resources"></a>
 
 The default views of UM package required a few front-end resources.
 * jQuery
