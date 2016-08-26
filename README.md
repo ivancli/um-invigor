@@ -33,9 +33,9 @@ Please check [System/Project requirements and Assumptions](#system-project-requi
     * [Controllers in _UM_ package](#controllers-in-um-package)
     * [Controllers in _app_ folder](#controllers-in-app-folder)
 * [Middleware](#middleware)
-    * [Sample usage of role in _routes_](#sample-ussage-of-role-in-routes)
-    * [Sample usage of permission in _routes_](#sample-ussage-of-permission-in-routes)
-    * [Sample usage of ability in _routes_](#sample-ussage-of-ability-in-routes)
+    * [Sample usage of role in _routes_](#sample-usage-of-role-in-routes)
+    * [Sample usage of permission in _routes_](#sample-usage-of-permission-in-routes)
+    * [Sample usage of ability in _routes_](#sample-usage-of-ability-in-routes)
     * [Sample usage of middleware in _controllers_](#sample-usage-of-middleware-in-controllers)
 * [Default data](#default-data)
 * [Entity relationships](#entity-relationships)
@@ -416,7 +416,7 @@ There are three main types of middleware available in the package.
 
 All middleware can be set in _routes_ file or _controllers_. And here are the usages.
 
-#####<a name="sample-ussage-of-role-in-routes"></a>Sample usage of role in _routes_: 
+#####<a name="sample-usage-of-role-in-routes"></a>Sample usage of role in _routes_: 
 
 ```php
 Route::get('url', ['middleware' => ['role:super_admin|client']])
