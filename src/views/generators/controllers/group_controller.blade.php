@@ -34,7 +34,7 @@ class GroupController extends UMGroupController
                 return $output;
             }
         } else {
-            return view('um::group.index');
+            return view('um.group.index');
         }
     }
 
@@ -45,7 +45,7 @@ class GroupController extends UMGroupController
      */
     public function create()
     {
-        return view('um::group.create');
+        return view('um.group.create');
     }
 
     /**
@@ -117,7 +117,7 @@ class GroupController extends UMGroupController
                     return $group;
                 }
             } else {
-                return view('um::group.show')->with(compact(['group', 'status']));
+                return view('um.group.show')->with(compact(['group', 'status']));
             }
         }
     }
@@ -136,7 +136,7 @@ class GroupController extends UMGroupController
             abort(404);
             return false;
         } else {
-            return view('um::group.edit')->with(compact(['group']));
+            return view('um.group.edit')->with(compact(['group']));
         }
     }
 

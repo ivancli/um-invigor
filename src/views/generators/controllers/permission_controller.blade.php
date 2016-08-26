@@ -36,7 +36,7 @@ class PermissionController extends UMPermissionController
                 return $output;
             }
         } else {
-            return view('um::permission.index');
+            return view('um.permission.index');
         }
     }
 
@@ -49,7 +49,7 @@ class PermissionController extends UMPermissionController
     {
         $roles = UMRole::pluck('display_name', (new UMRole())->getKeyName());
         $permissions = UMPermission::pluck('display_name', (new UMPermission())->getKeyName());
-        return view('um::permission.create')->with(compact(['roles', 'permissions']));
+        return view('um.permission.create')->with(compact(['roles', 'permissions']));
     }
 
     /**
@@ -118,7 +118,7 @@ class PermissionController extends UMPermissionController
                     return $permission;
                 }
             } else {
-                return view('um::permission.show')->with(compact(['permission', 'status']));
+                return view('um.permission.show')->with(compact(['permission', 'status']));
             }
         }
     }
@@ -142,7 +142,7 @@ class PermissionController extends UMPermissionController
             }
             $permissions = UMPermission::all()->except($exceptIDs)->pluck('display_name', (new UMPermission())->getKeyName());
             $roles = UMRole::pluck('display_name', (new UMRole())->getKeyName());
-            return view("um::permission.edit")->with(compact(['permission', 'roles', 'permissions']));
+            return view("um.permission.edit")->with(compact(['permission', 'roles', 'permissions']));
         }
     }
 

@@ -37,7 +37,7 @@ class UserController extends UMUserController
                 return $output;
             }
         } else {
-            return view('um::user.index');
+            return view('um.user.index');
         }
     }
 
@@ -50,7 +50,7 @@ class UserController extends UMUserController
     {
         $groups = UMGroup::pluck('name', 'id');
         $roles = UMRole::pluck('display_name', 'id');
-        return view('um::user.create')->with(compact(['groups', 'roles']));
+        return view('um.user.create')->with(compact(['groups', 'roles']));
     }
 
     /**
@@ -125,7 +125,7 @@ class UserController extends UMUserController
                     return $user;
                 }
             } else {
-                return view('um::user.show')->with(compact(['user', 'status']));
+                return view('um.user.show')->with(compact(['user', 'status']));
             }
         }
     }
@@ -146,7 +146,7 @@ class UserController extends UMUserController
         } else {
             $groups = UMGroup::pluck('name', 'id');
             $roles = UMRole::pluck('display_name', 'id');
-            return view("um::user.edit")->with(compact(['user', 'groups', 'roles']));
+            return view("um.user.edit")->with(compact(['user', 'groups', 'roles']));
         }
     }
 

@@ -36,7 +36,7 @@ class RoleController extends UMRoleController
                 return $output;
             }
         } else {
-            return view('um::role.index');
+            return view('um.role.index');
         }
     }
 
@@ -48,7 +48,7 @@ class RoleController extends UMRoleController
     public function create()
     {
         $permissions = UMPermission::pluck('display_name', (new UMPermission())->getKeyName());
-        return view('um::role.create')->with(compact(['permissions']));
+        return view('um.role.create')->with(compact(['permissions']));
     }
 
     /**
@@ -118,7 +118,7 @@ class RoleController extends UMRoleController
                     return $role;
                 }
             } else {
-                return view('um::role.show')->with(compact(['role', 'status']));
+                return view('um.role.show')->with(compact(['role', 'status']));
             }
         }
     }
@@ -137,7 +137,7 @@ class RoleController extends UMRoleController
             return false;
         } else {
             $permissions = UMPermission::pluck('display_name', (new UMPermission())->getKeyName());
-            return view("um::role.edit")->with(compact(['role', 'permissions']));
+            return view("um.role.edit")->with(compact(['role', 'permissions']));
         }
     }
 

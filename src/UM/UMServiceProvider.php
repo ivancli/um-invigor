@@ -35,8 +35,14 @@ class UMServiceProvider extends ServiceProvider
     public function boot()
     {
         // Publish config files
+//        $this->publishes([
+//            __DIR__ . '/../config/config.php' => config_path('um.php'),
+//        ]);
         $this->publishes([
-            __DIR__ . '/../config/config.php' => config_path('um.php'),
+            __DIR__.'/../views/user' => resource_path('views/um/user'),
+            __DIR__.'/../views/group' => resource_path('views/um/group'),
+            __DIR__.'/../views/role' => resource_path('views/um/role'),
+            __DIR__.'/../views/permission' => resource_path('views/um/permission'),
         ]);
 
         $this->loadViewsFrom(__DIR__.'/../views/', 'um');
